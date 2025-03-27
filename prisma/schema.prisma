@@ -15,15 +15,17 @@ datasource db {
 
 // ----------------------------------------------------- models ----------------------------------------------------- //
 
-model Usuario {
+model User {
   id        Int       @id @default(autoincrement())
   email     String    @unique
   password  String
-  nombre    String
+  name      String    @map("nombre")
   rol       Rol       @default(CLIENTE)
   createdAt DateTime  @default(now())
   cliente   Cliente?
   empleado  Empleado?
+
+  @@map("Usuario")
 }
 
 enum Rol {
@@ -43,7 +45,7 @@ model Sucursal {
 model Empleado {
   id         Int       @id @default(autoincrement())
   usuarioId  Int       @unique
-  usuario    Usuario   @relation(fields: [usuarioId], references: [id])
+  usuario    User      @relation(fields: [usuarioId], references: [id])
   sucursalId Int
   sucursal   Sucursal  @relation(fields: [sucursalId], references: [id])
   reservas   Reserva[]
@@ -52,7 +54,7 @@ model Empleado {
 model Cliente {
   id        Int       @id @default(autoincrement())
   usuarioId Int       @unique
-  usuario   Usuario   @relation(fields: [usuarioId], references: [id])
+  usuario   User      @relation(fields: [usuarioId], references: [id])
   telefono  String?
   reservas  Reserva[]
 }

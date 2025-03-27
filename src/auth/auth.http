@@ -1,0 +1,37 @@
+{
+  "email": "admin@gmail.com",
+  "password": "Admin123@",
+  "name": "Administrador",
+  "rol": "ADMIN",
+  "telefono": "1234567890"
+}
+
+
+{
+  "email": "cliente@gmail.com",
+  "password": "Cliente123@",
+  "name": "Juan Pérez",
+  "rol": "CLIENTE",
+  "telefono": "0987654321"
+}
+
+
+{
+  "email": "empleado@gmail.com",
+  "password": "Empleado123@",
+  "name": "María García",
+  "rol": "EMPLEADO",
+  "telefono": "5551234567",
+  "sucursalId": 1
+}
+
+curl -X 'POST' \
+  'http://172.27.38.53:8001/auth/login' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "email": "admin@gmail.com",
+  "password": "Admin123@"
+}'
+
+# eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJyb2wiOiJBRE1JTiIsIm5hbWUiOiJBZG1pbmlzdHJhZG9yIiwiaWF0IjoxNzQzMTEzNDExLCJleHAiOjE3NDMxNDIyMTF9.ZmITd5awFlt0wMSwDhTEm_wg6izD3FYWxpJmFz78RYM

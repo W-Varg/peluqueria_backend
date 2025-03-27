@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { ConfigService } from '@nestjs/config';
 import { configSwagger, IPackageJson, printServerInitLog } from './helpers/swagger.helper';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -12,6 +13,8 @@ async function bootstrap() {
   const packageJson = configService.get<IPackageJson>('packageJson')!;
 
   app.enableCors();
+
+  app.useGlobalPipes(new ValidationPipe());
 
   configSwagger(app, packageJson);
 
