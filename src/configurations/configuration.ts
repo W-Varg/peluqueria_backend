@@ -8,7 +8,7 @@ export default () => {
 
   return {
     packageJson: pjson,
-    port: Number(process.env.ENV_PORT) || 8001,
+    port: Number(process.env.ENV_PORT) || 3001,
     appMaxSize: process.env.ENV_FILE_MAX_SIZE || '100mb',
     showSwagger: process.env.ENV_SWAGGER_SHOW || 'false',
     debugServer: process.env.ENV_DEBUG_SERVER || 'false',
