@@ -1,0 +1,119 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ----------------------------------------------------- models ----------------------------------------------------- //
+
+model Usuario {
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
+  password  String
+  nombre    String
+  rol       Rol       @default(CLIENTE)
+  createdAt DateTime  @default(now())
+  cliente   Cliente?
+  empleado  Empleado?
+}
+
+enum Rol {
+  ADMIN
+  EMPLEADO
+  CLIENTE
+}
+
+model Sucursal {
+  id        Int        @id @default(autoincrement())
+  nombre    String
+  direccion String
+  telefono  String
+  empleados Empleado[]
+}
+
+model Empleado {
+  id         Int       @id @default(autoincrement())
+  usuarioId  Int       @unique
+  usuario    Usuario   @relation(fields: [usuarioId], references: [id])
+  sucursalId Int
+  sucursal   Sucursal  @relation(fields: [sucursalId], references: [id])
+  reservas   Reserva[]
+}
+
+model Cliente {
+  id        Int       @id @default(autoincrement())
+  usuarioId Int       @unique
+  usuario   Usuario   @relation(fields: [usuarioId], references: [id])
+  telefono  String?
+  reservas  Reserva[]
+}
+
+model Servicio {
+  id          Int       @id @default(autoincrement())
+  nombre      String
+  descripcion String
+  duracion    Int // duración en minutos
+  precio      Float
+  reservas    Reserva[]
+}
+
+model Reserva {
+  id         Int           @id @default(autoincrement())
+  fecha      DateTime
+  hora       DateTime
+  clienteId  Int
+  cliente    Cliente       @relation(fields: [clienteId], references: [id])
+  empleadoId Int
+  empleado   Empleado      @relation(fields: [empleadoId], references: [id])
+  servicioId Int
+  servicio   Servicio      @relation(fields: [servicioId], references: [id])
+  estado     EstadoReserva @default(PENDIENTE)
+}
+
+enum EstadoReserva {
+  PENDIENTE
+  CONFIRMADA
+  CANCELADA
+  COMPLETADA
+}
+
+// model HorarioTrabajo {
+//   id         Int       @id @default(autoincrement())
+//   empleado   Empleado  @relation(fields: [empleadoId], references: [id])
+//   empleadoId Int
+//   diaSemana  DiaSemana
+//   horaInicio DateTime
+//   horaFin    DateTime
+//   createdAt  DateTime  @default(now())
+//   updatedAt  DateTime  @updatedAt
+// }
+
+// enum DiaSemana {
+//   LUNES
+//   MARTES
+//   MIERCOLES
+//   JUEVES
+//   VIERNES
+//   SABADO
+//   DOMINGO
+// }
+
+// model Producto {
+//   id          Int      @id @default(autoincrement())
+//   nombre      String
+//   descripcion String
+//   precio      Float
+//   stock       Int
+//   categoria   String
+//   createdAt   DateTime @default(now())
+//   updatedAt   DateTime @updatedAt
+// }
