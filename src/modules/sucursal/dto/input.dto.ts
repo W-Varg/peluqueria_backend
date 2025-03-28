@@ -1,26 +1,27 @@
 import { PartialType } from '@nestjs/swagger';
-import { IsString, IsNotEmpty, IsPhoneNumber } from 'class-validator';
+import { IsString, IsNotEmpty } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateSucursalDto {
+  @ApiProperty()
   @IsString()
   @IsNotEmpty()
   nombre: string;
 
+  @ApiProperty()
   @IsString()
   @IsNotEmpty()
   direccion: string;
 
+  @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  @IsPhoneNumber('PE') // Ajusta el código de país según necesites
   telefono: string;
 }
 
 export class UpdateSucursalDto extends PartialType(CreateSucursalDto) {}
 
 /* ------------------------------------------------------------------------------------------------------------------ */
-
-import { ApiProperty } from '@nestjs/swagger';
 
 export class SucursalDto {
   @ApiProperty()
