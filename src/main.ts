@@ -12,7 +12,7 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   const packageJson = configService.get<IPackageJson>('packageJson')!;
 
-  app.enableCors();
+  app.enableCors({ origin: ['http://localhost:5173'], credentials: true });
 
   app.useGlobalPipes(new ValidationPipe());
 
