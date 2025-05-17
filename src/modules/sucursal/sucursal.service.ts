@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from 'src/database/database.service';
 import { CreateSucursalDto, UpdateSucursalDto } from './dto/input.dto';
+import { PrismaService } from 'src/database/prisma.service';
 
 @Injectable()
 export class SucursalesService {

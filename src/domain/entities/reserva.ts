@@ -3,6 +3,13 @@ import { Horario } from '../value-objects/horario';
 import { Cliente } from './cliente';
 import { Servicio } from './servicio';
 
+interface ReservaProps {
+  Cliente: Cliente;
+  Servicio: Servicio;
+  Horario: Horario;
+  Estado: EstadoReserva;
+}
+
 export class Reserva {
   private constructor(
     private readonly id: string,
@@ -12,7 +19,7 @@ export class Reserva {
     private estado: EstadoReserva,
   ) {}
 
-  static create(props: Omit<Reserva, 'id'>, id: string): Reserva {
+  static create(props: ReservaProps, id: string): Reserva {
     return new Reserva(id, props.Cliente, props.Servicio, props.Horario, props.Estado);
   }
 

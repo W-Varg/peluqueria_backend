@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { Servicio } from '../domain/entities/servicio';
-import { CreateServicioDto } from '../domain/dto/create-servicio.dto';
+import { Duracion } from 'src/domain/value-objects/duracion';
+import { Precio } from 'src/domain/value-objects/precio';
+import { PrismaService } from 'src/database/prisma.service';
+import { CreateServicioDto } from './interface/dto/create-servicio.dto';
 
 @Injectable()
 export class ServicioService {
@@ -17,26 +19,31 @@ export class ServicioService {
       },
     });
 
-    return new Servicio({
+    return Servicio.create({
       id: servicio.id.toString(),
       nombre: servicio.nombre,
-      duracion: new Duracion(servicio.duracion),
-      precio: new Precio(servicio.precio, 'USD'),
+      duracion: servicio.duracion,
+      precio: {
+        monto: servicio.precio,
+        moneda: 'USD',
+      },
       descripcion: servicio.descripcion,
     });
   }
 
   async findAll(): Promise<Servicio[]> {
     const servicios = await this.prisma.servicio.findMany();
-    return servicios.map(
-      (servicio) =>
-        new Servicio({
-          id: servicio.id.toString(),
-          nombre: servicio.nombre,
-          duracion: new Duracion(servicio.duracion),
-          precio: new Precio(servicio.precio, 'USD'),
-          descripcion: servicio.descripcion,
-        }),
+    return servicios.map((servicio) =>
+      Servicio.create({
+        id: servicio.id.toString(),
+        nombre: servicio.nombre,
+        duracion: servicio.duracion,
+        precio: {
+          monto: servicio.precio,
+          moneda: 'USD',
+        },
+        descripcion: servicio.descripcion,
+      }),
     );
   }
 
@@ -49,11 +56,14 @@ export class ServicioService {
       throw new Error('Servicio no encontrado');
     }
 
-    return new Servicio({
+    return Servicio.create({
       id: servicio.id.toString(),
       nombre: servicio.nombre,
-      duracion: new Duracion(servicio.duracion),
-      precio: new Precio(servicio.precio, 'USD'),
+      duracion: servicio.duracion,
+      precio: {
+        monto: servicio.precio,
+        moneda: 'USD',
+      },
       descripcion: servicio.descripcion,
     });
   }
@@ -69,11 +79,14 @@ export class ServicioService {
       },
     });
 
-    return new Servicio({
+    return Servicio.create({
       id: servicio.id.toString(),
       nombre: servicio.nombre,
-      duracion: new Duracion(servicio.duracion),
-      precio: new Precio(servicio.precio, 'USD'),
+      duracion: servicio.duracion,
+      precio: {
+        monto: servicio.precio,
+        moneda: 'USD',
+      },
       descripcion: servicio.descripcion,
     });
   }
