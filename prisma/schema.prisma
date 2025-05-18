@@ -52,20 +52,23 @@ model Empleado {
 }
 
 model Cliente {
-  id        Int       @id @default(autoincrement())
-  usuarioId Int       @unique
-  usuario   User      @relation(fields: [usuarioId], references: [id])
-  telefono  String?
-  reservas  Reserva[]
+  id            Int       @id @default(autoincrement())
+  usuarioId     Int       @unique
+  usuario       User      @relation(fields: [usuarioId], references: [id])
+  telefono      String?
+  reservas      Reserva[]
+  visitasTotal  Int       @default(0)
+  ultimaVisita  DateTime?
 }
 
 model Servicio {
-  id          Int       @id @default(autoincrement())
+  id          Int                @id @default(autoincrement())
   nombre      String
   descripcion String
   duracion    Int // duración en minutos
   precio      Float
   reservas    Reserva[]
+  productos   ServicioProducto[]
 }
 
 model Reserva {
@@ -79,6 +82,7 @@ model Reserva {
   servicioId Int
   servicio   Servicio      @relation(fields: [servicioId], references: [id])
   estado     EstadoReserva @default(PENDIENTE)
+  factura    Factura?
 }
 
 enum EstadoReserva {
@@ -86,6 +90,43 @@ enum EstadoReserva {
   CONFIRMADA
   CANCELADA
   COMPLETADA
+}
+
+model Producto {
+  id          Int               @id @default(autoincrement())
+  nombre      String
+  descripcion String
+  precio      Float
+  stock       Int
+  categoria   String
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  servicios   ServicioProducto[]
+}
+
+model ServicioProducto {
+  id          Int      @id @default(autoincrement())
+  servicioId  Int
+  productoId  Int
+  cantidad    Int
+  servicio    Servicio @relation(fields: [servicioId], references: [id])
+  producto    Producto @relation(fields: [productoId], references: [id])
+}
+
+model Factura {
+  id          Int      @id @default(autoincrement())
+  reservaId   Int      @unique
+  reserva     Reserva  @relation(fields: [reservaId], references: [id])
+  total       Float
+  descuento   Float    @default(0)
+  fecha       DateTime @default(now())
+  estado      EstadoFactura @default(PENDIENTE)
+}
+
+enum EstadoFactura {
+  PENDIENTE
+  PAGADA
+  CANCELADA
 }
 
 // model HorarioTrabajo {

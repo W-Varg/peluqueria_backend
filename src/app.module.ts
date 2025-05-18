@@ -7,6 +7,8 @@ import { AuthModule } from './auth/auth.module';
 import { SucursalModule } from './modules/sucursal/sucursal.module';
 import { EmpleadosModule } from './modules/empleados/empleados.module';
 import configuration from './configurations/configuration';
+import { ServicioModule } from './servicio/servicio.module';
+import { PrismaService } from './database/prisma.service';
 
 @Module({
   imports: [
@@ -16,8 +18,9 @@ import configuration from './configurations/configuration';
     /* ----------------------------------------------------- modules ---------------------------------------------------- */
     SucursalModule,
     EmpleadosModule,
+    ServicioModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, PrismaService],
 })
 export class AppModule {}

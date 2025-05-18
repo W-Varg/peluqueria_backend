@@ -1,107 +1,176 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { Cliente } from '../domain/entities/cliente';
 import { CreateClienteDto } from '../domain/dto/create-cliente.dto';
-import { PrismaService } from 'src/database/database.service';
+import { PrismaService } from '../database/prisma.service';
+import { PreferenciasCliente } from '../domain/value-objects/preferencias-cliente';
+import { Prisma } from '@prisma/client';
+
+type PrismaClienteWithRelations = Prisma.ClienteGetPayload<{
+  include: {
+    usuario: true;
+  };
+}>;
 
 @Injectable()
 export class ClienteService {
   constructor(private prisma: PrismaService) {}
 
-  async create(dto: CreateClienteDto): Promise<Cliente> {
-    const cliente = await this.prisma.cliente.create({
-      data: {
-        nombre: dto.nombre,
-        telefono: dto.telefono,
-        email: dto.email,
-        preferencias: dto.preferencias,
-        usuario: {
-          create: {
-            email: dto.email,
-            name: dto.nombre,
-            rol: 'CLIENTE',
-          },
-        },
-      },
-      include: {
-        usuario: true,
-      },
+  private mapToEntity(data: PrismaClienteWithRelations): Cliente {
+    const preferencias = PreferenciasCliente.create({
+      horario: [],
+      estilista: [],
+      servicios: [],
     });
 
-    return new Cliente({
-      id: cliente.id.toString(),
-      nombre: cliente.nombre,
-      telefono: cliente.telefono,
-      email: cliente.email,
-      preferencias: cliente.preferencias,
-    });
+    const props = {
+      Nombre: data.usuario.name,
+      Telefono: data.telefono || '',
+      Email: data.usuario.email,
+      Preferencias: preferencias,
+      Id: data.id.toString(),
+    };
+
+    return Cliente.create(props, data.id.toString());
+  }
+
+  async create(dto: CreateClienteDto): Promise<Cliente> {
+    try {
+      // Verificar si ya existe un usuario con ese email
+      const existingUser = await this.prisma.user.findUnique({
+        where: { email: dto.email },
+      });
+
+      if (existingUser) {
+        throw new BadRequestException('Ya existe un usuario con ese email');
+      }
+
+      const cliente = await this.prisma.cliente.create({
+        data: {
+          telefono: dto.telefono,
+          usuario: {
+            create: {
+              email: dto.email,
+              name: dto.nombre,
+              password: '', // Temporal password, should be handled by auth service
+              rol: 'CLIENTE',
+            },
+          },
+        },
+        include: {
+          usuario: true,
+        },
+      });
+
+      return this.mapToEntity(cliente);
+    } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      throw new BadRequestException(
+        `Error al crear el cliente: ${error instanceof Error ? error.message : 'Error desconocido'}`,
+      );
+    }
   }
 
   async findAll(): Promise<Cliente[]> {
-    const clientes = await this.prisma.cliente.findMany({
-      include: {
-        usuario: true,
-      },
-    });
+    try {
+      const clientes = await this.prisma.cliente.findMany({
+        include: {
+          usuario: true,
+        },
+      });
 
-    return clientes.map(
-      (cliente) =>
-        new Cliente({
-          id: cliente.id.toString(),
-          nombre: cliente.nombre,
-          telefono: cliente.telefono,
-          email: cliente.email,
-          preferencias: cliente.preferencias,
-        }),
-    );
+      return clientes.map((cliente) => this.mapToEntity(cliente));
+    } catch {
+      throw new BadRequestException('Error al obtener los clientes');
+    }
   }
 
   async findOne(id: string): Promise<Cliente> {
-    const cliente = await this.prisma.cliente.findUnique({
-      where: { id: parseInt(id) },
-      include: {
-        usuario: true,
-      },
-    });
+    try {
+      const cliente = await this.prisma.cliente.findUnique({
+        where: { id: parseInt(id) },
+        include: {
+          usuario: true,
+        },
+      });
 
-    if (!cliente) {
-      throw new Error('Cliente no encontrado');
+      if (!cliente) {
+        throw new NotFoundException(`Cliente con ID ${id} no encontrado`);
+      }
+
+      return this.mapToEntity(cliente);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new BadRequestException('Error al obtener el cliente');
     }
-
-    return new Cliente({
-      id: cliente.id.toString(),
-      nombre: cliente.nombre,
-      telefono: cliente.telefono,
-      email: cliente.email,
-      preferencias: cliente.preferencias,
-    });
   }
 
   async update(id: string, dto: CreateClienteDto): Promise<Cliente> {
-    const cliente = await this.prisma.cliente.update({
-      where: { id: parseInt(id) },
-      data: {
-        nombre: dto.nombre,
-        telefono: dto.telefono,
-        email: dto.email,
-        preferencias: dto.preferencias,
-      },
-      include: {
-        usuario: true,
-      },
-    });
+    try {
+      // Verificar si existe el cliente
+      await this.findOne(id);
 
-    return new Cliente({
-      id: cliente.id.toString(),
-      nombre: cliente.nombre,
-      telefono: cliente.telefono,
-      email: cliente.email,
-      preferencias: cliente.preferencias,
-    });
+      // Verificar si el nuevo email ya está en uso por otro usuario
+      if (dto.email) {
+        const existingUser = await this.prisma.user.findFirst({
+          where: {
+            email: dto.email,
+            cliente: {
+              id: {
+                not: parseInt(id),
+              },
+            },
+          },
+        });
+
+        if (existingUser) {
+          throw new BadRequestException('El email ya está en uso por otro usuario');
+        }
+      }
+
+      const cliente = await this.prisma.cliente.update({
+        where: { id: parseInt(id) },
+        data: {
+          telefono: dto.telefono,
+          usuario: {
+            update: {
+              email: dto.email,
+              name: dto.nombre,
+            },
+          },
+        },
+        include: {
+          usuario: true,
+        },
+      });
+
+      return this.mapToEntity(cliente);
+    } catch (error) {
+      if (error instanceof NotFoundException || error instanceof BadRequestException) {
+        throw error;
+      }
+      throw new BadRequestException(
+        `Error al actualizar el cliente: ${error instanceof Error ? error.message : 'Error desconocido'}`,
+      );
+    }
   }
 
   async remove(id: string): Promise<void> {
-    await this.prisma.cliente.delete({
-      where: { id: parseInt(id) },
-    });
+    try {
+      // Verificar si existe el cliente
+      await this.findOne(id);
+
+      await this.prisma.cliente.delete({
+        where: { id: parseInt(id) },
+      });
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new BadRequestException('Error al eliminar el cliente');
+    }
   }
 }

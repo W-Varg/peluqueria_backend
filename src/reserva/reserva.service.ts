@@ -1,213 +1,306 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { PrismaService } from '../database/prisma.service';
 import { Reserva } from '../domain/entities/reserva';
 import { CreateReservaDto } from '../domain/dto/create-reserva.dto';
+import { UpdateReservaDto } from '../domain/dto/update-reserva.dto';
 import { EstadoReserva } from '../domain/value-objects/estado-reserva';
+import { Cliente } from '../domain/entities/cliente';
+import { Servicio } from '../domain/entities/servicio';
+import { PreferenciasCliente } from '../domain/value-objects/preferencias-cliente';
+import { Duracion } from '../domain/value-objects/duracion';
+import { Precio } from '../domain/value-objects/precio';
+import { Horario } from '../domain/value-objects/horario';
+import { Prisma } from '@prisma/client';
+
+type PrismaReservaWithRelations = Prisma.ReservaGetPayload<{
+  include: {
+    cliente: {
+      include: {
+        usuario: true;
+      };
+    };
+    servicio: true;
+    empleado: {
+      include: {
+        usuario: true;
+      };
+    };
+  };
+}>;
 
 @Injectable()
 export class ReservaService {
   constructor(private prisma: PrismaService) {}
 
-  async create(dto: CreateReservaDto): Promise<Reserva> {
-    const reserva = await this.prisma.reserva.create({
-      data: {
-        fecha: dto.fecha,
-        hora: new Date(
-          dto.fecha.getFullYear(),
-          dto.fecha.getMonth(),
-          dto.fecha.getDate(),
-          parseInt(dto.horaInicio.split(':')[0]),
-          parseInt(dto.horaInicio.split(':')[1]),
-        ),
-        clienteId: parseInt(dto.clienteId),
-        empleadoId: parseInt(dto.empleadoId),
-        servicioId: parseInt(dto.servicioId),
-        estado: dto.estado || EstadoReserva.PENDIENTE,
-      },
-      include: {
-        cliente: {
-          include: { usuario: true },
-        },
-        empleado: {
-          include: { usuario: true },
-        },
-        servicio: true,
-      },
-    });
-
-    return new Reserva({
-      id: reserva.id.toString(),
-      cliente: new Cliente({
-        id: reserva.cliente.id.toString(),
-        nombre: reserva.cliente.usuario.name,
-        telefono: reserva.cliente.telefono,
-        email: reserva.cliente.usuario.email,
-        preferencias: new PreferenciasCliente({
-          horario: [],
-          estilista: [],
-          servicios: [],
-        }),
+  private mapReservaToEntity(reserva: PrismaReservaWithRelations): Reserva {
+    // Create Cliente entity
+    const clienteProps = {
+      Nombre: reserva.cliente.usuario.name,
+      Telefono: reserva.cliente.telefono || '',
+      Email: reserva.cliente.usuario.email,
+      Preferencias: PreferenciasCliente.create({
+        horario: [],
+        estilista: [],
+        servicios: [],
       }),
-      servicio: new Servicio({
-        id: reserva.servicio.id.toString(),
-        nombre: reserva.servicio.nombre,
-        duracion: new Duracion(reserva.servicio.duracion),
-        precio: new Precio(reserva.servicio.precio, 'USD'),
-        descripcion: reserva.servicio.descripcion,
-      }),
-      horario: new Horario(reserva.fecha, dto.horaInicio, dto.horaFin),
-      estado: reserva.estado,
-    });
-  }
+      Id: reserva.cliente.id.toString(),
+    };
+    const cliente = Cliente.create(clienteProps, reserva.cliente.id.toString());
 
-  async findAll(): Promise<Reserva[]> {
-    const reservas = await this.prisma.reserva.findMany({
-      include: {
-        cliente: {
-          include: { usuario: true },
-        },
-        empleado: {
-          include: { usuario: true },
-        },
-        servicio: true,
+    // Create Servicio entity
+    const servicioProps = {
+      Nombre: reserva.servicio.nombre,
+      Duracion: Duracion.create(reserva.servicio.duracion),
+      Precio: Precio.create(reserva.servicio.precio, 'USD'),
+      Descripcion: reserva.servicio.descripcion,
+      Id: reserva.servicio.id.toString(),
+    };
+    const servicio = Servicio.create(servicioProps, reserva.servicio.id.toString());
+
+    // Create Horario value object
+    const horaInicio = new Date(reserva.hora);
+    const horaFin = new Date(horaInicio.getTime() + reserva.servicio.duracion * 60000);
+    const horario = Horario.create(
+      reserva.fecha,
+      `${horaInicio.getHours().toString().padStart(2, '0')}:${horaInicio.getMinutes().toString().padStart(2, '0')}`,
+      `${horaFin.getHours().toString().padStart(2, '0')}:${horaFin.getMinutes().toString().padStart(2, '0')}`,
+    );
+
+    // Create Reserva entity
+    return Reserva.create(
+      {
+        Cliente: cliente,
+        Servicio: servicio,
+        Horario: horario,
+        Estado: reserva.estado as EstadoReserva,
       },
-    });
-
-    return reservas.map(
-      (reserva) =>
-        new Reserva({
-          id: reserva.id.toString(),
-          cliente: new Cliente({
-            id: reserva.cliente.id.toString(),
-            nombre: reserva.cliente.usuario.name,
-            telefono: reserva.cliente.telefono,
-            email: reserva.cliente.usuario.email,
-            preferencias: new PreferenciasCliente({
-              horario: [],
-              estilista: [],
-              servicios: [],
-            }),
-          }),
-          servicio: new Servicio({
-            id: reserva.servicio.id.toString(),
-            nombre: reserva.servicio.nombre,
-            duracion: new Duracion(reserva.servicio.duracion),
-            precio: new Precio(reserva.servicio.precio, 'USD'),
-            descripcion: reserva.servicio.descripcion,
-          }),
-          horario: new Horario(
-            reserva.fecha,
-            new Date(reserva.hora).getHours() + ':' + new Date(reserva.hora).getMinutes(),
-            new Date(reserva.hora).getHours() + ':' + new Date(reserva.hora).getMinutes() + 1,
-          ),
-          estado: reserva.estado,
-        }),
+      reserva.id.toString(),
     );
   }
 
-  async findOne(id: string): Promise<Reserva> {
-    const reserva = await this.prisma.reserva.findUnique({
-      where: { id: parseInt(id) },
-      include: {
-        cliente: {
-          include: { usuario: true },
-        },
-        empleado: {
-          include: { usuario: true },
-        },
-        servicio: true,
-      },
-    });
+  async create(dto: CreateReservaDto): Promise<Reserva> {
+    try {
+      // Validar disponibilidad del horario
+      await this.validarDisponibilidad(dto);
 
-    if (!reserva) {
-      throw new Error('Reserva no encontrada');
+      const horaInicio = new Date(
+        dto.fecha.getFullYear(),
+        dto.fecha.getMonth(),
+        dto.fecha.getDate(),
+        parseInt(dto.horaInicio.split(':')[0]),
+        parseInt(dto.horaInicio.split(':')[1]),
+      );
+
+      const reserva = await this.prisma.reserva.create({
+        data: {
+          fecha: dto.fecha,
+          hora: horaInicio,
+          clienteId: parseInt(dto.clienteId),
+          empleadoId: parseInt(dto.empleadoId),
+          servicioId: parseInt(dto.servicioId),
+          estado: dto.estado || EstadoReserva.PENDIENTE,
+        },
+        include: {
+          cliente: {
+            include: { usuario: true },
+          },
+          empleado: {
+            include: { usuario: true },
+          },
+          servicio: true,
+        },
+      });
+
+      return this.mapReservaToEntity(reserva);
+    } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      throw new BadRequestException(
+        `Error al crear la reserva: ${error instanceof Error ? error.message : 'Error desconocido'}`,
+      );
     }
-
-    return new Reserva({
-      id: reserva.id.toString(),
-      cliente: new Cliente({
-        id: reserva.cliente.id.toString(),
-        nombre: reserva.cliente.usuario.name,
-        telefono: reserva.cliente.telefono,
-        email: reserva.cliente.usuario.email,
-        preferencias: new PreferenciasCliente({
-          horario: [],
-          estilista: [],
-          servicios: [],
-        }),
-      }),
-      servicio: new Servicio({
-        id: reserva.servicio.id.toString(),
-        nombre: reserva.servicio.nombre,
-        duracion: new Duracion(reserva.servicio.duracion),
-        precio: new Precio(reserva.servicio.precio, 'USD'),
-        descripcion: reserva.servicio.descripcion,
-      }),
-      horario: new Horario(
-        reserva.fecha,
-        new Date(reserva.hora).getHours() + ':' + new Date(reserva.hora).getMinutes(),
-        new Date(reserva.hora).getHours() + ':' + new Date(reserva.hora).getMinutes() + 1,
-      ),
-      estado: reserva.estado,
-    });
   }
 
-  async update(id: string, dto: CreateReservaDto): Promise<Reserva> {
-    const reserva = await this.prisma.reserva.update({
-      where: { id: parseInt(id) },
-      data: {
-        fecha: dto.fecha,
-        hora: new Date(
-          dto.fecha.getFullYear(),
-          dto.fecha.getMonth(),
-          dto.fecha.getDate(),
-          parseInt(dto.horaInicio.split(':')[0]),
-          parseInt(dto.horaInicio.split(':')[1]),
-        ),
-        clienteId: parseInt(dto.clienteId),
-        empleadoId: parseInt(dto.empleadoId),
-        servicioId: parseInt(dto.servicioId),
-        estado: dto.estado || EstadoReserva.PENDIENTE,
-      },
-      include: {
-        cliente: {
-          include: { usuario: true },
+  async findAll(): Promise<Reserva[]> {
+    try {
+      const reservas = await this.prisma.reserva.findMany({
+        include: {
+          cliente: {
+            include: { usuario: true },
+          },
+          empleado: {
+            include: { usuario: true },
+          },
+          servicio: true,
         },
-        empleado: {
-          include: { usuario: true },
-        },
-        servicio: true,
-      },
-    });
+      });
 
-    return new Reserva({
-      id: reserva.id.toString(),
-      cliente: new Cliente({
-        id: reserva.cliente.id.toString(),
-        nombre: reserva.cliente.usuario.name,
-        telefono: reserva.cliente.telefono,
-        email: reserva.cliente.usuario.email,
-        preferencias: new PreferenciasCliente({
-          horario: [],
-          estilista: [],
-          servicios: [],
-        }),
-      }),
-      servicio: new Servicio({
-        id: reserva.servicio.id.toString(),
-        nombre: reserva.servicio.nombre,
-        duracion: new Duracion(reserva.servicio.duracion),
-        precio: new Precio(reserva.servicio.precio, 'USD'),
-        descripcion: reserva.servicio.descripcion,
-      }),
-      horario: new Horario(reserva.fecha, dto.horaInicio, dto.horaFin),
-      estado: reserva.estado,
-    });
+      return reservas.map((reserva) => this.mapReservaToEntity(reserva));
+    } catch {
+      throw new BadRequestException('Error al obtener las reservas');
+    }
+  }
+
+  async findOne(id: string): Promise<Reserva> {
+    try {
+      const reserva = await this.prisma.reserva.findUnique({
+        where: { id: parseInt(id) },
+        include: {
+          cliente: {
+            include: { usuario: true },
+          },
+          empleado: {
+            include: { usuario: true },
+          },
+          servicio: true,
+        },
+      });
+
+      if (!reserva) {
+        throw new NotFoundException(`Reserva con ID ${id} no encontrada`);
+      }
+
+      return this.mapReservaToEntity(reserva);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new BadRequestException('Error al obtener la reserva');
+    }
+  }
+
+  async update(id: string, dto: UpdateReservaDto): Promise<Reserva> {
+    try {
+      // Verificar si existe la reserva
+      await this.findOne(id);
+      
+      // Validar disponibilidad del nuevo horario
+      if (dto.fecha && dto.horaInicio) {
+        await this.validarDisponibilidad(dto, parseInt(id));
+      }
+
+      const horaInicio = dto.fecha && dto.horaInicio ? new Date(
+        dto.fecha.getFullYear(),
+        dto.fecha.getMonth(),
+        dto.fecha.getDate(),
+        parseInt(dto.horaInicio.split(':')[0]),
+        parseInt(dto.horaInicio.split(':')[1]),
+      ) : undefined;
+
+      const reserva = await this.prisma.reserva.update({
+        where: { id: parseInt(id) },
+        data: {
+          fecha: dto.fecha,
+          hora: horaInicio,
+          clienteId: dto.clienteId ? parseInt(dto.clienteId) : undefined,
+          empleadoId: dto.empleadoId ? parseInt(dto.empleadoId) : undefined,
+          servicioId: dto.servicioId ? parseInt(dto.servicioId) : undefined,
+          estado: dto.estado,
+        },
+        include: {
+          cliente: {
+            include: { usuario: true },
+          },
+          empleado: {
+            include: { usuario: true },
+          },
+          servicio: true,
+        },
+      });
+
+      return this.mapReservaToEntity(reserva);
+    } catch (error) {
+      if (error instanceof NotFoundException || error instanceof BadRequestException) {
+        throw error;
+      }
+      throw new BadRequestException(
+        `Error al actualizar la reserva: ${error instanceof Error ? error.message : 'Error desconocido'}`,
+      );
+    }
   }
 
   async remove(id: string): Promise<void> {
-    await this.prisma.reserva.delete({
-      where: { id: parseInt(id) },
-    });
+    try {
+      // Verificar si existe la reserva
+      await this.findOne(id);
+      
+      await this.prisma.reserva.delete({
+        where: { id: parseInt(id) },
+      });
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new BadRequestException('Error al eliminar la reserva');
+    }
+  }
+
+  private async validarDisponibilidad(dto: CreateReservaDto | UpdateReservaDto, excludeReservaId?: number): Promise<void> {
+    if (!dto.fecha || !dto.horaInicio || !dto.empleadoId || !dto.servicioId) {
+      throw new BadRequestException('Faltan datos requeridos para validar la disponibilidad');
+    }
+
+    try {
+      const fecha = dto.fecha;
+      const horaInicio = new Date(
+        fecha.getFullYear(),
+        fecha.getMonth(),
+        fecha.getDate(),
+        parseInt(dto.horaInicio.split(':')[0]),
+        parseInt(dto.horaInicio.split(':')[1]),
+      );
+
+      // Obtener el servicio para conocer la duración
+      const servicio = await this.prisma.servicio.findUnique({
+        where: { id: parseInt(dto.servicioId) },
+      });
+
+      if (!servicio) {
+        throw new BadRequestException('Servicio no encontrado');
+      }
+
+      const horaFin = new Date(horaInicio.getTime() + servicio.duracion * 60000);
+
+      // Buscar reservas que se solapen
+      const reservasSuperpuestas = await this.prisma.reserva.findMany({
+        where: {
+          AND: [
+            { empleadoId: parseInt(dto.empleadoId) },
+            { fecha },
+            {
+              OR: [
+                {
+                  AND: [
+                    { hora: { lte: horaInicio } },
+                    {
+                      hora: {
+                        gt: new Date(horaInicio.getTime() - servicio.duracion * 60000),
+                      },
+                    },
+                  ],
+                },
+                {
+                  AND: [
+                    { hora: { lt: horaFin } },
+                    { hora: { gte: horaInicio } },
+                  ],
+                },
+              ],
+            },
+            { id: excludeReservaId ? { not: excludeReservaId } : undefined },
+          ],
+        },
+      });
+
+      if (reservasSuperpuestas.length > 0) {
+        throw new BadRequestException('El horario seleccionado no está disponible');
+      }
+    } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      throw new BadRequestException('Error al validar la disponibilidad del horario');
+    }
   }
 }
