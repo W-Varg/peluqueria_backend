@@ -4,56 +4,56 @@ import { Cliente } from './cliente';
 import { Servicio } from './servicio';
 
 interface ReservaProps {
-  Cliente: Cliente;
-  Servicio: Servicio;
-  Horario: Horario;
-  Estado: EstadoReserva;
+  cliente: Cliente;
+  servicio: Servicio;
+  horario: Horario;
+  estado: EstadoReserva;
 }
 
 export class Reserva {
   private constructor(
-    private readonly id: string,
-    private cliente: Cliente,
-    private servicio: Servicio,
-    private horario: Horario,
-    private estado: EstadoReserva,
+    private readonly _id: string,
+    private _cliente: Cliente,
+    private _servicio: Servicio,
+    private _horario: Horario,
+    private _estado: EstadoReserva,
   ) {}
 
   static create(props: ReservaProps, id: string): Reserva {
-    return new Reserva(id, props.Cliente, props.Servicio, props.Horario, props.Estado);
+    return new Reserva(id, props.cliente, props.servicio, props.horario, props.estado);
   }
 
-  get Id(): string {
-    return this.id;
+  get id(): string {
+    return this._id;
   }
 
-  get Cliente(): Cliente {
-    return this.cliente;
+  get cliente(): Cliente {
+    return this._cliente;
   }
 
-  get Servicio(): Servicio {
-    return this.servicio;
+  get servicio(): Servicio {
+    return this._servicio;
   }
 
-  get Horario(): Horario {
-    return this.horario;
+  get horario(): Horario {
+    return this._horario;
   }
 
-  get Estado(): EstadoReserva {
-    return this.estado;
+  get estado(): EstadoReserva {
+    return this._estado;
   }
 
   cancelar(): void {
-    if (this.estado === EstadoReserva.CANCELADA) {
+    if (this._estado === EstadoReserva.CANCELADA) {
       throw new Error('La reserva ya está cancelada');
     }
-    this.estado = EstadoReserva.CANCELADA;
+    this._estado = EstadoReserva.CANCELADA;
   }
 
   confirmar(): void {
-    if (this.estado !== EstadoReserva.PENDIENTE) {
+    if (this._estado !== EstadoReserva.PENDIENTE) {
       throw new Error('Solo se pueden confirmar reservas pendientes');
     }
-    this.estado = EstadoReserva.CONFIRMADA;
+    this._estado = EstadoReserva.CONFIRMADA;
   }
 }

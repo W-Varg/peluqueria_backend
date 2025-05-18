@@ -1,21 +1,30 @@
 export class Precio {
-  private constructor(
-    private readonly monto: number,
-    private readonly moneda: string,
-  ) {}
+  constructor(
+    private readonly _monto: number,
+    private readonly _moneda: string = 'BOB',
+  ) {
+    this.validarMonto(_monto);
+  }
 
-  static create(monto: number, moneda: string): Precio {
-    if (monto <= 0) {
-      throw new Error('El monto debe ser mayor a 0');
+  private validarMonto(monto: number): void {
+    if (monto < 0) {
+      throw new Error('El monto no puede ser negativo');
     }
-    return new Precio(monto, moneda);
   }
 
-  get Monto(): number {
-    return this.monto;
+  get monto(): number {
+    return this._monto;
   }
 
-  get Moneda(): string {
-    return this.moneda;
+  get moneda(): string {
+    return this._moneda;
+  }
+
+  equals(other: Precio): boolean {
+    return this.monto === other.monto && this.moneda === other.moneda;
+  }
+
+  toString(): string {
+    return `${this.monto} ${this.moneda}`;
   }
 }

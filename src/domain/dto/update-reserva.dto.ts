@@ -56,4 +56,4 @@ export class UpdateReservaDto {
   @IsEnum(EstadoReserva)
   @IsOptional()
   estado?: EstadoReserva;
-} 
+}

@@ -1,14 +1,29 @@
 export class Duracion {
-  private constructor(private readonly minutos: number) {}
+  constructor(private readonly _minutos: number) {
+    this.validarDuracion(_minutos);
+  }
 
-  static create(minutos: number): Duracion {
+  private validarDuracion(minutos: number): void {
     if (minutos <= 0) {
       throw new Error('La duración debe ser mayor a 0 minutos');
     }
-    return new Duracion(minutos);
   }
 
-  get Minutos(): number {
-    return this.minutos;
+  get minutos(): number {
+    return this._minutos;
+  }
+
+  equals(other: Duracion): boolean {
+    return this.minutos === other.minutos;
+  }
+
+  toString(): string {
+    const horas = Math.floor(this.minutos / 60);
+    const minutosRestantes = this.minutos % 60;
+
+    if (horas > 0) {
+      return `${horas}h ${minutosRestantes}min`;
+    }
+    return `${minutosRestantes}min`;
   }
 }

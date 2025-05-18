@@ -2,50 +2,58 @@ import { PreferenciasCliente } from '../value-objects/preferencias-cliente';
 
 export class Cliente {
   private constructor(
-    private readonly id: string,
-    private nombre: string,
-    private telefono: string,
-    private email: string,
-    private preferencias: PreferenciasCliente,
+    private readonly _id: string,
+    private _nombre: string,
+    private _telefono: string,
+    private _email: string,
+    private _preferencias: PreferenciasCliente,
   ) {}
 
-  static create(props: Omit<Cliente, 'id'>, id: string): Cliente {
-    return new Cliente(id, props.Nombre, props.Telefono, props.Email, props.Preferencias);
+  static create(
+    props: {
+      nombre: string;
+      telefono: string;
+      email: string;
+      preferencias: PreferenciasCliente;
+    },
+    id: string,
+  ): Cliente {
+    return new Cliente(id, props.nombre, props.telefono, props.email, props.preferencias);
   }
 
-  get Id(): string {
-    return this.id;
+  get id(): string {
+    return this._id;
   }
 
-  get Nombre(): string {
-    return this.nombre;
+  get nombre(): string {
+    return this._nombre;
   }
 
-  set Nombre(nombre: string) {
-    this.nombre = nombre;
+  set nombre(nombre: string) {
+    this._nombre = nombre;
   }
 
-  get Telefono(): string {
-    return this.telefono;
+  get telefono(): string {
+    return this._telefono;
   }
 
-  set Telefono(telefono: string) {
-    this.telefono = telefono;
+  set telefono(telefono: string) {
+    this._telefono = telefono;
   }
 
-  get Email(): string {
-    return this.email;
+  get email(): string {
+    return this._email;
   }
 
-  set Email(email: string) {
-    this.email = email;
+  set email(email: string) {
+    this._email = email;
   }
 
-  get Preferencias(): PreferenciasCliente {
-    return this.preferencias;
+  get preferencias(): PreferenciasCliente {
+    return this._preferencias;
   }
 
-  set Preferencias(preferencias: PreferenciasCliente) {
-    this.preferencias = preferencias;
+  set preferencias(preferencias: PreferenciasCliente) {
+    this._preferencias = preferencias;
   }
 }
