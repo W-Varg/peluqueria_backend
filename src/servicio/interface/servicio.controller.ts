@@ -28,10 +28,7 @@ export class ServicioController {
     try {
       return await this.servicioService.findAll();
     } catch (error) {
-      throw new HttpException(
-        'Error al obtener servicios',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException('Error al obtener servicios', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -43,10 +40,7 @@ export class ServicioController {
     try {
       return await this.servicioService.findById(id);
     } catch (error) {
-      throw new HttpException(
-        'Servicio no encontrado',
-        HttpStatus.NOT_FOUND,
-      );
+      throw new HttpException('Servicio no encontrado', HttpStatus.NOT_FOUND);
     }
   }
 
@@ -59,10 +53,7 @@ export class ServicioController {
       await this.servicioService.create(createServicioDto);
       return { message: 'Servicio creado exitosamente' };
     } catch (error) {
-      throw new HttpException(
-        'Error al crear servicio',
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException('Error al crear servicio', HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -78,10 +69,7 @@ export class ServicioController {
       await this.servicioService.update(id, updateServicioDto);
       return { message: 'Servicio actualizado exitosamente' };
     } catch (error) {
-      throw new HttpException(
-        'Error al actualizar servicio',
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException('Error al actualizar servicio', HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -94,10 +82,7 @@ export class ServicioController {
       await this.servicioService.delete(id);
       return { message: 'Servicio eliminado exitosamente' };
     } catch (error) {
-      throw new HttpException(
-        'Error al eliminar servicio',
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException('Error al eliminar servicio', HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -129,10 +114,7 @@ export class ServicioController {
       await this.servicioService.actualizarPrecio(id, nuevoPrecio);
       return { message: 'Precio actualizado exitosamente' };
     } catch (error) {
-      throw new HttpException(
-        'Error al actualizar el precio',
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException('Error al actualizar el precio', HttpStatus.BAD_REQUEST);
     }
   }
 }

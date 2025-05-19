@@ -29,7 +29,7 @@ export class PrismaServicioRepository implements IServicioRepository {
       servicioData.duracion,
       servicioData.precio,
       servicioData.productos,
-      servicioData.id
+      servicioData.id,
     );
   }
 
@@ -45,14 +45,7 @@ export class PrismaServicioRepository implements IServicioRepository {
     });
 
     return servicios.map(
-      (s) => new Servicio(
-        s.nombre,
-        s.descripcion,
-        s.duracion,
-        s.precio,
-        s.productos,
-        s.id
-      ),
+      (s) => new Servicio(s.nombre, s.descripcion, s.duracion, s.precio, s.productos, s.id),
     );
   }
 
@@ -78,7 +71,7 @@ export class PrismaServicioRepository implements IServicioRepository {
     if (!id) {
       throw new Error('No se puede actualizar un servicio sin ID');
     }
-    
+
     await this.prisma.servicio.update({
       where: { id },
       data: {

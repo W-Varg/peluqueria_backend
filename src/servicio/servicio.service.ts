@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Servicio } from '../domain/entities/servicio';
-import { Duracion } from 'src/domain/value-objects/duracion';
-import { Precio } from 'src/domain/value-objects/precio';
-import { PrismaService } from 'src/database/prisma.service';
+import { Duracion } from '../domain/value-objects/duracion';
+import { Precio } from '../domain/value-objects/precio';
+import { PrismaService } from '../database/prisma.service';
 import { CreateServicioDto } from './interface/dto/create-servicio.dto';
 
 @Injectable()
@@ -14,36 +14,30 @@ export class ServicioService {
       data: {
         nombre: dto.nombre,
         duracion: dto.duracion,
-        precio: dto.precio.monto,
+        precio: dto.precio,
         descripcion: dto.descripcion,
       },
     });
 
-    return Servicio.create({
-      id: servicio.id.toString(),
-      nombre: servicio.nombre,
-      duracion: servicio.duracion,
-      precio: {
-        monto: servicio.precio,
-        moneda: 'USD',
-      },
-      descripcion: servicio.descripcion,
-    });
+    return Servicio.create(
+      servicio.id.toString(),
+      servicio.nombre,
+      new Duracion(servicio.duracion),
+      new Precio(servicio.precio),
+      servicio.descripcion,
+    );
   }
 
   async findAll(): Promise<Servicio[]> {
     const servicios = await this.prisma.servicio.findMany();
     return servicios.map((servicio) =>
-      Servicio.create({
-        id: servicio.id.toString(),
-        nombre: servicio.nombre,
-        duracion: servicio.duracion,
-        precio: {
-          monto: servicio.precio,
-          moneda: 'USD',
-        },
-        descripcion: servicio.descripcion,
-      }),
+      Servicio.create(
+        servicio.id.toString(),
+        servicio.nombre,
+        new Duracion(servicio.duracion),
+        new Precio(servicio.precio),
+        servicio.descripcion,
+      ),
     );
   }
 
@@ -53,19 +47,16 @@ export class ServicioService {
     });
 
     if (!servicio) {
-      throw new Error('Servicio no encontrado');
+      throw new NotFoundException(`Servicio con ID ${id} no encontrado`);
     }
 
-    return Servicio.create({
-      id: servicio.id.toString(),
-      nombre: servicio.nombre,
-      duracion: servicio.duracion,
-      precio: {
-        monto: servicio.precio,
-        moneda: 'USD',
-      },
-      descripcion: servicio.descripcion,
-    });
+    return Servicio.create(
+      servicio.id.toString(),
+      servicio.nombre,
+      new Duracion(servicio.duracion),
+      new Precio(servicio.precio),
+      servicio.descripcion,
+    );
   }
 
   async update(id: string, dto: CreateServicioDto): Promise<Servicio> {
@@ -74,21 +65,18 @@ export class ServicioService {
       data: {
         nombre: dto.nombre,
         duracion: dto.duracion,
-        precio: dto.precio.monto,
+        precio: dto.precio,
         descripcion: dto.descripcion,
       },
     });
 
-    return Servicio.create({
-      id: servicio.id.toString(),
-      nombre: servicio.nombre,
-      duracion: servicio.duracion,
-      precio: {
-        monto: servicio.precio,
-        moneda: 'USD',
-      },
-      descripcion: servicio.descripcion,
-    });
+    return Servicio.create(
+      servicio.id.toString(),
+      servicio.nombre,
+      new Duracion(servicio.duracion),
+      new Precio(servicio.precio),
+      servicio.descripcion,
+    );
   }
 
   async remove(id: string): Promise<void> {

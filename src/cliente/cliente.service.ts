@@ -23,11 +23,10 @@ export class ClienteService {
     });
 
     const props = {
-      Nombre: data.usuario.name,
-      Telefono: data.telefono || '',
-      Email: data.usuario.email,
-      Preferencias: preferencias,
-      Id: data.id.toString(),
+      nombre: data.usuario.name,
+      telefono: data.telefono || '',
+      email: data.usuario.email,
+      preferencias: preferencias,
     };
 
     return Cliente.create(props, data.id.toString());
