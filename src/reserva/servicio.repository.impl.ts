@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../../../database/prisma.service';
-import { ServicioRepository } from '../../../../domain/repository/servicio.repository';
-import { Servicio } from '../../../../domain/entities/servicio';
-import { Duracion } from '../../../../domain/value-objects/duracion';
-import { Precio } from '../../../../domain/value-objects/precio';
+import { PrismaService } from '../database/prisma.service';
+import { ServicioRepository } from '../domain/repository/servicio.repository';
+import { Servicio } from '../domain/entities/servicio';
+import { Duracion } from '../domain/value-objects/duracion';
+import { Precio } from '../domain/value-objects/precio';
 
 @Injectable()
 export class PrismaServicioRepository implements ServicioRepository {

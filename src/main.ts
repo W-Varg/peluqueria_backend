@@ -18,7 +18,7 @@ async function bootstrap() {
 
   configSwagger(app, packageJson);
 
-  const port = configService.get<number>('port') || 3000;
+  const port = configService.get<number>('port') || 3001;
   await app.listen(port, '0.0.0.0').then(async () => {
     await printServerInitLog(app, packageJson);
   });

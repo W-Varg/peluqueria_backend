@@ -9,6 +9,8 @@ import { EmpleadosModule } from './modules/empleados/empleados.module';
 import configuration from './configurations/configuration';
 import { ServicioModule } from './modules/servicio.module';
 import { PrismaService } from './database/prisma.service';
+import { ReservationModule } from './reserva/reservation.module';
+import { ReservaModule } from './reserva/reserva.module';
 
 @Module({
   imports: [
@@ -19,6 +21,8 @@ import { PrismaService } from './database/prisma.service';
     SucursalModule,
     EmpleadosModule,
     ServicioModule,
+    ReservationModule,
+    ReservaModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],

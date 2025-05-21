@@ -128,35 +128,3 @@ enum EstadoFactura {
   PAGADA
   CANCELADA
 }
-
-// model HorarioTrabajo {
-//   id         Int       @id @default(autoincrement())
-//   empleado   Empleado  @relation(fields: [empleadoId], references: [id])
-//   empleadoId Int
-//   diaSemana  DiaSemana
-//   horaInicio DateTime
-//   horaFin    DateTime
-//   createdAt  DateTime  @default(now())
-//   updatedAt  DateTime  @updatedAt
-// }
-
-// enum DiaSemana {
-//   LUNES
-//   MARTES
-//   MIERCOLES
-//   JUEVES
-//   VIERNES
-//   SABADO
-//   DOMINGO
-// }
-
-// model Producto {
-//   id          Int      @id @default(autoincrement())
-//   nombre      String
-//   descripcion String
-//   precio      Float
-//   stock       Int
-//   categoria   String
-//   createdAt   DateTime @default(now())
-//   updatedAt   DateTime @updatedAt
-// }

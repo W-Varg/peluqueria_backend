@@ -1,11 +1,13 @@
 import { Module } from '@nestjs/common';
-import { ServicioController } from '../interface/controllers/servicio.controller';
+import { ServicioController } from '../servicio/servicio.controller';
 import { ServicioService } from '../application/services/servicio.service';
-import { PrismaServicioRepository } from '../infrastructure/persistence/prisma/repositories/servicio.repository.impl';
+import { PrismaServicioRepository } from '../reserva/servicio.repository.impl';
 import { SERVICIO_REPOSITORY } from '../domain/repository/servicio.repository.token';
 import { PrismaService } from '../database/prisma.service';
+import { DatabaseModule } from '../database/database.module';
 
 @Module({
+  imports: [DatabaseModule],
   controllers: [ServicioController],
   providers: [
     ServicioService,
