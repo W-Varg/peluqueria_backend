@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ServicioController } from './servicio/servicio.controller';
+import { PublicServicesController, ServicioController } from './servicio/servicio.controller';
 import { ServicioService } from '../application/services/servicio.service';
 import { PrismaServicioRepository } from './reserva/servicio.repository.impl';
 import { SERVICIO_REPOSITORY } from '../domain/repository/servicio.repository.token';
@@ -8,7 +8,7 @@ import { DatabaseModule } from '../database/database.module';
 
 @Module({
   imports: [DatabaseModule],
-  controllers: [ServicioController],
+  controllers: [ServicioController, PublicServicesController],
   providers: [
     ServicioService,
     PrismaService,

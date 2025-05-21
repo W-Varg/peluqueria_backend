@@ -53,3 +53,20 @@ export class ServicioController {
     await this.servicioService.delete(id);
   }
 }
+
+@Controller('public/servicios')
+export class PublicServicesController {
+  constructor(private readonly servicioService: ServicioService) {}
+
+  @Post()
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async create(@Body() createServicioDto: CreateServicioDto): Promise<Servicio> {
+    return this.servicioService.create(createServicioDto);
+  }
+
+  @Get()
+  async findAll(): Promise<Servicio[]> {
+    return this.servicioService.findAll();
+  }
+}
