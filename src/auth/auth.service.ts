@@ -1,7 +1,7 @@
 // src/auth/auth.service.ts
 import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { JwtPayload, LoginDto, RegisterDto } from './dto/login.dto';
+import { LoginDto, RegisterDto } from './dto/login.dto';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from 'src/database/prisma.service';
 
@@ -30,20 +30,17 @@ export class AuthService {
         email,
         password: hashedPassword,
         name,
-        rol,
+        rol: rol ?? 'CLIENTE',
       },
     });
 
-    if (rol === 'CLIENTE') {
+    if (user.rol === 'CLIENTE') {
       await this.prisma.cliente.create({
         data: {
           usuarioId: user.id,
           telefono: telefono || '',
         },
       });
-    } else if (rol === 'EMPLEADO') {
-      // Aquí deberías manejar la creación del empleado
-      // Necesitarías el sucursalId desde el DTO
     }
 
     return {
@@ -93,11 +90,5 @@ export class AuthService {
         empleadoId: user.empleado?.id,
       },
     };
-  }
-
-  async validateUser(payload: any) {
-    return await this.prisma.user.findUnique({
-      where: { id: payload.id },
-    });
   }
 }

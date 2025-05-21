@@ -9,8 +9,9 @@ import { EmpleadosModule } from './modules/empleados/empleados.module';
 import configuration from './configurations/configuration';
 import { ServicioModule } from './modules/servicio.module';
 import { PrismaService } from './database/prisma.service';
-import { ReservationModule } from './reserva/reservation.module';
-import { ReservaModule } from './reserva/reserva.module';
+import { ReservationModule } from './modules/reserva/reservation.module';
+import { ReservaModule } from './modules/reserva/reserva.module';
+import { DomainModule } from './domain/domain.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { ReservaModule } from './reserva/reserva.module';
     DatabaseModule,
     AuthModule,
     /* ----------------------------------------------------- modules ---------------------------------------------------- */
+    DomainModule,
     SucursalModule,
     EmpleadosModule,
     ServicioModule,

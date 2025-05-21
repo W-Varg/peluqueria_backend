@@ -6,6 +6,7 @@ export class Cliente {
     private _nombre: string,
     private _telefono: string,
     private _email: string,
+    private _usuarioId: number,
     private _preferencias: PreferenciasCliente,
   ) {}
 
@@ -14,11 +15,19 @@ export class Cliente {
       nombre: string;
       telefono: string;
       email: string;
+      usuarioId: number;
       preferencias: PreferenciasCliente;
     },
     id: string,
   ): Cliente {
-    return new Cliente(id, props.nombre, props.telefono, props.email, props.preferencias);
+    return new Cliente(
+      id,
+      props.nombre,
+      props.telefono,
+      props.email,
+      props.usuarioId,
+      props.preferencias,
+    );
   }
 
   get id(): string {

@@ -1,17 +1,17 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../database/prisma.service';
-import { Reserva } from '../domain/entities/reserva';
+import { PrismaService } from '../../database/prisma.service';
+import { Reserva } from '../../domain/entities/reserva';
 import { CreateReservaDto } from './dto/create-reserva.dto';
 import { UpdateReservaDto } from './dto/update-reserva.dto';
-import { EstadoReserva } from '../domain/value-objects/estado-reserva';
-import { Cliente } from '../domain/entities/cliente';
-import { Servicio } from '../domain/entities/servicio';
-import { PreferenciasCliente } from '../domain/value-objects/preferencias-cliente';
-import { Duracion } from '../domain/value-objects/duracion';
-import { Precio } from '../domain/value-objects/precio';
-import { Horario } from '../domain/value-objects/horario';
+import { EstadoReserva } from '../../domain/value-objects/estado-reserva';
+import { Cliente } from '../../domain/entities/cliente';
+import { Servicio } from '../../domain/entities/servicio';
+import { PreferenciasCliente } from '../../domain/value-objects/preferencias-cliente';
+import { Duracion } from '../../domain/value-objects/duracion';
+import { Precio } from '../../domain/value-objects/precio';
+import { Horario } from '../../domain/value-objects/horario';
 import { Prisma } from '@prisma/client';
-import { EmployeeAssignmentService } from '../domain/services/employee-assignment.service';
+import { EmployeeAssignmentService } from '../../domain/services/employee-assignment.service';
 
 type PrismaReservaWithRelations = Prisma.ReservaGetPayload<{
   include: {
@@ -42,6 +42,7 @@ export class ReservaService {
       nombre: reserva.cliente.usuario.name,
       telefono: reserva.cliente.telefono || '',
       email: reserva.cliente.usuario.email,
+      usuarioId: reserva.cliente.usuario.id,
       preferencias: PreferenciasCliente.create({
         horario: [],
         estilista: [],

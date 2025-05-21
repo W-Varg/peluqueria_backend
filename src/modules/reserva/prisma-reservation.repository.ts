@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../database/prisma.service';
-import { IReservationRepository } from '../domain/repositories/reservation.repository.interface';
-import { Reservation } from '../domain/entities/reservation.entity';
+import { PrismaService } from '../../database/prisma.service';
+import { IReservationRepository } from '../../domain/repositories/reservation.repository.interface';
+import { Reservation } from '../../domain/entities/reservation.entity';
 import { Prisma } from '@prisma/client';
 
 @Injectable()

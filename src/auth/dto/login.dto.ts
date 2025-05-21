@@ -33,8 +33,8 @@ export class RegisterDto {
 
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
-  rol: Rol;
+  @IsOptional()
+  rol?: Rol;
 
   @ApiProperty()
   @IsString()

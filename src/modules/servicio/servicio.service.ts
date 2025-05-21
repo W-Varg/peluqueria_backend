@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Servicio } from '../domain/entities/servicio';
-import { Duracion } from '../domain/value-objects/duracion';
-import { Precio } from '../domain/value-objects/precio';
-import { PrismaService } from '../database/prisma.service';
+import { Servicio } from '../../domain/entities/servicio';
+import { Duracion } from '../../domain/value-objects/duracion';
+import { Precio } from '../../domain/value-objects/precio';
+import { PrismaService } from '../../database/prisma.service';
 import { CreateServicioDto } from './interface/dto/create-servicio.dto';
 
 @Injectable()

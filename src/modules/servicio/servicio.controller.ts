@@ -10,9 +10,9 @@ import {
   HttpStatus,
   UseGuards,
 } from '@nestjs/common';
-import { ServicioService } from '../application/services/servicio.service';
-import { CreateServicioDto } from '../application/dtos/servicio/create-servicio.dto';
-import { Servicio } from '../domain/entities/servicio';
+import { ServicioService } from '../../application/services/servicio.service';
+import { CreateServicioDto } from '../../application/dtos/servicio/create-servicio.dto';
+import { Servicio } from '../../domain/entities/servicio';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';

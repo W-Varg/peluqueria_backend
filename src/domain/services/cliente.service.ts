@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
-import { Cliente } from '../domain/entities/cliente';
-import { CreateClienteDto } from '../domain/dto/create-cliente.dto';
-import { PrismaService } from '../database/prisma.service';
-import { PreferenciasCliente } from '../domain/value-objects/preferencias-cliente';
+import { Cliente } from '../entities/cliente';
+import { CreateClienteDto } from '../dto/create-cliente.dto';
+import { PrismaService } from '../../database/prisma.service';
+import { PreferenciasCliente } from '../value-objects/preferencias-cliente';
 import { Prisma } from '@prisma/client';
 
 type PrismaClienteWithRelations = Prisma.ClienteGetPayload<{
@@ -26,6 +26,7 @@ export class ClienteService {
       nombre: data.usuario.name,
       telefono: data.telefono || '',
       email: data.usuario.email,
+      usuarioId: data.usuario.id,
       preferencias: preferencias,
     };
 
@@ -78,6 +79,7 @@ export class ClienteService {
           usuario: true,
         },
       });
+      console.log('clientes', clientes);
 
       return clientes.map((cliente) => this.mapToEntity(cliente));
     } catch {

@@ -1,9 +1,9 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { Reservation } from '../../domain/entities/reservation.entity';
 import { IReservationRepository } from '../../domain/repositories/reservation.repository.interface';
-import { CreateReservationDto } from '../../reserva/dtos/reservation.dto';
 import { EstadoReserva } from '@prisma/client';
 import { EmployeeAssignmentService } from '../../domain/services/employee-assignment.service';
+import { CreateReservationDto } from 'src/modules/reserva/dtos/reservation.dto';
 
 @Injectable()
 export class CreateReservationUseCase {

@@ -12,8 +12,7 @@ import {
 import { ReservaService } from './reserva.service';
 import { CreateReservaDto } from './dto/create-reserva.dto';
 import { UpdateReservaDto } from './dto/update-reserva.dto';
-import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
-import { Rol } from '@prisma/client';
+import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 
