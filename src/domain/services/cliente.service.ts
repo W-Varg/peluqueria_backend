@@ -28,6 +28,9 @@ export class ClienteService {
       email: data.usuario.email,
       usuarioId: data.usuario.id,
       preferencias: preferencias,
+      estado: data.estado,
+      visitas: data.visitasTotal,
+      ultimaVisita: data.ultimaVisita,
     };
 
     return Cliente.create(props, data.id.toString());
@@ -77,9 +80,14 @@ export class ClienteService {
       const clientes = await this.prisma.cliente.findMany({
         include: {
           usuario: true,
+          reservas: {
+            orderBy: {
+              fecha: 'desc',
+            },
+            take: 1,
+          },
         },
       });
-      console.log('clientes', clientes);
 
       return clientes.map((cliente) => this.mapToEntity(cliente));
     } catch {
@@ -93,6 +101,12 @@ export class ClienteService {
         where: { id: parseInt(id) },
         include: {
           usuario: true,
+          reservas: {
+            orderBy: {
+              fecha: 'desc',
+            },
+            take: 1,
+          },
         },
       });
 

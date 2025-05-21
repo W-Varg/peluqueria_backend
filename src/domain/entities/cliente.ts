@@ -8,6 +8,9 @@ export class Cliente {
     private _email: string,
     private _usuarioId: number,
     private _preferencias: PreferenciasCliente,
+    private _estado: boolean,
+    private _visitas: number,
+    private _ultimaVisita: Date | null,
   ) {}
 
   static create(
@@ -17,6 +20,9 @@ export class Cliente {
       email: string;
       usuarioId: number;
       preferencias: PreferenciasCliente;
+      estado: boolean;
+      visitas: number;
+      ultimaVisita: Date | null;
     },
     id: string,
   ): Cliente {
@@ -27,6 +33,9 @@ export class Cliente {
       props.email,
       props.usuarioId,
       props.preferencias,
+      props.estado,
+      props.visitas,
+      props.ultimaVisita,
     );
   }
 
@@ -64,5 +73,17 @@ export class Cliente {
 
   set preferencias(preferencias: PreferenciasCliente) {
     this._preferencias = preferencias;
+  }
+
+  get estado(): boolean {
+    return this._estado;
+  }
+
+  get visitas(): number {
+    return this._visitas;
+  }
+
+  get ultimaVisita(): Date | null {
+    return this._ultimaVisita;
   }
 }

@@ -48,7 +48,9 @@ export class ReservaService {
         estilista: [],
         servicios: [],
       }),
-      id: reserva.cliente.id.toString(),
+      estado: reserva.cliente.estado,
+      visitas: reserva.cliente.visitasTotal,
+      ultimaVisita: reserva.cliente.ultimaVisita,
     };
     const cliente = Cliente.create(clienteProps, reserva.cliente.id.toString());
 
@@ -116,8 +118,16 @@ export class ReservaService {
         estado: createReservaDto.estado,
       },
       include: {
-        cliente: true,
-        empleado: true,
+        cliente: {
+          include: {
+            usuario: true,
+          },
+        },
+        empleado: {
+          include: {
+            usuario: true,
+          },
+        },
         servicio: true,
       },
     });
@@ -126,8 +136,16 @@ export class ReservaService {
   async findAll() {
     return this.prisma.reserva.findMany({
       include: {
-        cliente: true,
-        empleado: true,
+        cliente: {
+          include: {
+            usuario: true,
+          },
+        },
+        empleado: {
+          include: {
+            usuario: true,
+          },
+        },
         servicio: true,
       },
     });
@@ -137,8 +155,16 @@ export class ReservaService {
     const reserva = await this.prisma.reserva.findUnique({
       where: { id: parseInt(id) },
       include: {
-        cliente: true,
-        empleado: true,
+        cliente: {
+          include: {
+            usuario: true,
+          },
+        },
+        empleado: {
+          include: {
+            usuario: true,
+          },
+        },
         servicio: true,
       },
     });
@@ -187,8 +213,16 @@ export class ReservaService {
         estado: updateReservaDto.estado,
       },
       include: {
-        cliente: true,
-        empleado: true,
+        cliente: {
+          include: {
+            usuario: true,
+          },
+        },
+        empleado: {
+          include: {
+            usuario: true,
+          },
+        },
         servicio: true,
       },
     });

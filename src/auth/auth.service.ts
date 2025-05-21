@@ -58,6 +58,7 @@ export class AuthService {
         cliente: true,
         empleado: true,
       },
+      omit: { password: false },
     });
 
     if (!user) {
