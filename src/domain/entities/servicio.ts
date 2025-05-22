@@ -3,11 +3,12 @@ import { Precio } from '../value-objects/precio';
 
 export class Servicio {
   constructor(
-    private readonly _id: string,
+    private readonly _id: number,
     private _nombre: string,
     private _duracion: Duracion,
     private _precio: Precio,
     private _descripcion: string,
+    private _estado: boolean,
   ) {
     this.validarNombre(_nombre);
     this.validarDescripcion(_descripcion);
@@ -32,7 +33,7 @@ export class Servicio {
   }
 
   // Getters
-  get id(): string {
+  get id(): number {
     return this._id;
   }
 
@@ -50,6 +51,10 @@ export class Servicio {
 
   get descripcion(): string {
     return this._descripcion;
+  }
+
+  get estado(): boolean {
+    return this._estado;
   }
 
   // Setters con validación
@@ -73,22 +78,24 @@ export class Servicio {
 
   // Factory method
   static create(
-    id: string,
+    id: number,
     nombre: string,
     duracion: Duracion,
     precio: Precio,
     descripcion: string,
+    estado = true,
   ): Servicio {
-    return new Servicio(id, nombre, duracion, precio, descripcion);
+    return new Servicio(id, nombre, duracion, precio, descripcion, estado);
   }
 
   // Método para crear desde datos primitivos
   static fromPrimitives(data: {
-    id: string;
+    id: number;
     nombre: string;
     duracion: number;
     precio: number;
     descripcion: string;
+    estado: boolean;
   }): Servicio {
     return new Servicio(
       data.id,
@@ -96,6 +103,7 @@ export class Servicio {
       new Duracion(data.duracion),
       new Precio(data.precio),
       data.descripcion,
+      data.estado,
     );
   }
 

@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   ParseIntPipe,
+  Put,
 } from '@nestjs/common';
 import { ReservaService } from './reserva.service';
 import { CreateReservaDto } from './dto/create-reserva.dto';
@@ -25,6 +26,12 @@ export class ReservaController {
   @Post()
   // @Roles(Rol.ADMIN)
   create(@Body() createReservaDto: CreateReservaDto) {
+    return this.reservaService.create(createReservaDto);
+  }
+
+  @Post('public')
+  // @Roles(Rol.ADMIN)
+  publicReserva(@Body() createReservaDto: CreateReservaDto) {
     return this.reservaService.create(createReservaDto);
   }
 
@@ -50,5 +57,18 @@ export class ReservaController {
   // @Roles(Rol.ADMIN)
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.reservaService.remove(id.toString());
+  }
+
+  /* --------------------------------------------- servicioes para cliente -------------------------------------------- */
+  @Get('cliente/:id')
+  // @Roles(Rol.ADMIN)
+  reservasCliente(@Param('id', ParseIntPipe) id: number) {
+    return this.reservaService.reservasCliente(id);
+  }
+
+  @Put(':id/cancelar')
+  // @Roles(Rol.ADMIN)
+  cancelarReserva(@Param('id', ParseIntPipe) id: number) {
+    return this.reservaService.cancelarReserva(id.toString());
   }
 }

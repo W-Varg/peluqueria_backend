@@ -10,8 +10,8 @@ import {
   HttpStatus,
   UseGuards,
 } from '@nestjs/common';
-import { ServicioService } from '../../application/services/servicio.service';
-import { CreateServicioDto } from '../../application/dtos/servicio/create-servicio.dto';
+import { ServicioService } from '../../domain/services/servicio.service';
+import { CreateServicioDto } from '../../domain/dto/create-servicio.dto';
 import { Servicio } from '../../domain/entities/servicio';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
@@ -36,7 +36,7 @@ export class ServicioController {
 
   @Get(':id')
   async findOne(@Param('id') id: string): Promise<Servicio> {
-    return this.servicioService.findById(id);
+    return this.servicioService.findById(+id);
   }
 
   @Put(':id')
@@ -44,15 +44,17 @@ export class ServicioController {
     @Param('id') id: string,
     @Body() updateServicioDto: CreateServicioDto,
   ): Promise<Servicio> {
-    return this.servicioService.update(id, updateServicioDto);
+    return this.servicioService.update(+id, updateServicioDto);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id') id: string): Promise<void> {
-    await this.servicioService.delete(id);
+    await this.servicioService.delete(+id);
   }
 }
+
+/* ------------------------------------------------------------------------------------------------------------------ */
 
 @Controller('public/servicios')
 export class PublicServicesController {

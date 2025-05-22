@@ -82,8 +82,8 @@ model Reserva {
   hora       DateTime
   clienteId  Int
   cliente    Cliente       @relation(fields: [clienteId], references: [id])
-  empleadoId Int
-  empleado   Empleado      @relation(fields: [empleadoId], references: [id])
+  empleadoId Int?
+  empleado   Empleado?     @relation(fields: [empleadoId], references: [id])
   servicioId Int
   servicio   Servicio      @relation(fields: [servicioId], references: [id])
   estado     EstadoReserva @default(PENDIENTE)

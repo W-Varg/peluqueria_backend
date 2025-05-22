@@ -56,7 +56,7 @@ export class ReservaService {
 
     // Create Servicio entity
     const servicio = Servicio.create(
-      reserva.servicio.id.toString(),
+      reserva.servicio.id,
       reserva.servicio.nombre,
       new Duracion(reserva.servicio.duracion),
       new Precio(reserva.servicio.precio),
@@ -84,34 +84,44 @@ export class ReservaService {
     );
   }
 
-  private convertToDate(fecha: Date, horaStr: string): Date {
-    const [hours, minutes] = horaStr.split(':').map(Number);
-    return new Date(fecha.getFullYear(), fecha.getMonth(), fecha.getDate(), hours, minutes);
+  private convertToDate(fecha: Date, horaStr: Date): Date {
+    const fechaDate: Date = new Date(fecha);
+    const horaDate: Date = new Date(horaStr);
+    const [hours, minutes] = [horaDate.getHours(), horaDate.getMinutes()];
+    return new Date(
+      fechaDate.getFullYear(),
+      fechaDate.getMonth(),
+      fechaDate.getDate(),
+      hours,
+      minutes,
+    );
   }
 
   async create(createReservaDto: CreateReservaDto) {
     // Si no se proporciona empleadoId, buscar uno disponible
-    if (!createReservaDto.empleadoId) {
-      const hora = this.convertToDate(createReservaDto.fecha, createReservaDto.horaInicio);
-      const empleadoId = await this.employeeAssignmentService.findAvailableEmployee(
-        createReservaDto.fecha,
-        hora,
-        createReservaDto.servicioId,
-      );
+    // if (!createReservaDto.empleadoId) {
+    //   const hora = this.convertToDate(createReservaDto.fecha, createReservaDto.horaInicio);
+    //   const empleadoId = await this.employeeAssignmentService.findAvailableEmployee(
+    //     createReservaDto.fecha,
+    //     hora,
+    //     createReservaDto.servicioId,
+    //   );
 
-      if (!empleadoId) {
-        throw new NotFoundException('No hay empleados disponibles para este horario');
-      }
+    //   console.log('execute', createReservaDto, !empleadoId);
 
-      createReservaDto.empleadoId = empleadoId;
-    }
+    //   if (!empleadoId) {
+    //     throw new NotFoundException('No hay empleados disponibles para este horario');
+    //   }
+
+    //   createReservaDto.empleadoId = empleadoId;
+    // }
 
     const hora = this.convertToDate(createReservaDto.fecha, createReservaDto.horaInicio);
 
     return this.prisma.reserva.create({
       data: {
         fecha: createReservaDto.fecha,
-        hora,
+        hora: hora,
         clienteId: createReservaDto.clienteId,
         empleadoId: createReservaDto.empleadoId,
         servicioId: createReservaDto.servicioId,
@@ -148,6 +158,34 @@ export class ReservaService {
         },
         servicio: true,
       },
+    });
+  }
+
+  async reservasCliente(id: number) {
+    const result = await this.prisma.reserva.findMany({
+      where: { clienteId: id },
+      include: {
+        cliente: {
+          include: {
+            usuario: true,
+          },
+        },
+        empleado: {
+          include: {
+            usuario: true,
+          },
+        },
+        servicio: true,
+      },
+    });
+
+    return result;
+  }
+  async cancelarReserva(id: string) {
+    await this.findOne(id); // Verificar si existe
+    return this.prisma.reserva.update({
+      where: { id: +id },
+      data: { estado: EstadoReserva.CANCELADA },
     });
   }
 
