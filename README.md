@@ -1,122 +1,77 @@
-# 🚀 Proyecto Peluquería Bella - Backend
+# Peluquería Backend
 
-Sistema de gestión para peluquerías desarrollado con NestJS, Prisma y PostgreSQL. Incluye módulos para reservas, empleados, sucursales, clientes y servicios.
+Backend para el sistema de gestión de peluquería desarrollado con NestJS.
 
-## 📋 Requisitos Previos
+## Enlaces del Proyecto
 
-- Node.js v20.9+
-- npm v9+ o yarn
-- sqlite3
+- Frontend: [https://github.com/W-Varg/peluqueria_frontend.git](https://github.com/W-Varg/peluqueria_frontend.git)
+- Backend: [https://github.com/W-Varg/peluqueria_backend.git](https://github.com/W-Varg/peluqueria_backend.git)
 
-## 🛠 Instalación
+## Requisitos Mínimos
 
-1. **Clonar el repositorio**
+- Node.js 20.x o superior
+- Yarn 1.22.x o superior
+- PostgreSQL 15.x
+- Prisma ORM
 
-   ```bash
-   git clone https://github.com/W-Varg/peluqueria_backend.git
-   cd peluqueria-bella-backend
-   ```
+## Tecnologías Principales
 
-2. **Instalar dependencias**
+- NestJS
+- TypeScript
+- Prisma ORM
+- PostgreSQL
+- JWT para autenticación
 
-   ```bash
-   npm install
-   # o
-   yarn install
-   ```
+## Instalación
 
-3. **Configurar variables de entorno**
-
-   Crear un archivo `.env` en la raíz del proyecto basado en `.env.example`:
-
-   ```bash
-   cp .env.example .env
-   ```
-
-   Editar el archivo `.env` con tus credenciales:
-
-   ```env
-      DATABASE_URL="file:./dev.db"
-      JWT_SECRET=tu_clave_secreta_jwt_muy_segura
-
-   ```
-
-   **Generar cliente de Prisma**
-
-   ```bash
-   npx prisma generate
-   # o
-   yarn prisma generate
-   ```
-
-## 🚀 Ejecutar la Aplicación
-
-- Para desarrollo (con hot-reload):
-
-  ```bash
-  npm run start:dev
-  # o
-  yarn start:dev
-  ```
-
-- Para producción:
-
-  ```bash
-  npm run build
-  npm run start:prod
-  # o
-  yarn build
-  yarn start:prod
-  ```
-
-## 📦 Scripts Disponibles
-
-| Comando         | Descripción                        |
-| --------------- | ---------------------------------- |
-| start           | Inicia la app en producción        |
-| start:dev       | Inicia en modo desarrollo (watch)  |
-| build           | Compila el proyecto                |
-| test            | Ejecuta tests                      |
-| test:watch      | Ejecuta tests en watch mode        |
-| test:cov        | Ejecuta tests con cobertura        |
-| lint            | Ejecuta linter                     |
-| format          | Formatea el código                 |
-| prisma:migrate  | Ejecuta migraciones                |
-| prisma:studio   | Abre Prisma Studio                 |
-| prisma:generate | Genera cliente Prisma              |
-| prisma:seed     | Ejecuta seeder de la base de datos |
-
-## 🌐 Endpoints Principales
-
-La aplicación estará disponible en [http://localhost:3001](http://localhost:3001) por defecto.
-
-- **API Docs (Swagger):** [http://localhost:3001/api](http://localhost:3001/api)
-
-## Aceptación de peticiones CORS
-
-el bakend actualmente acepta peticiones de origen cruzado desde `http://localhost:5173/`
-
-
-## credenciales de acceso
-
-- **Email**: admin@gmail.com
-- **contraseña**: Admin123@
-
-## 🧑‍💻 Estructura del Proyecto
-
-```plaintext
-src/
-├── auth/               # Autenticación JWT
-├── modules/
-│   ├── empleados/          # Módulo de empleados
-│   └── sucursales/         # Módulo de sucursales
-├── database/             # Configuración de Prisma
-├── app.module.ts       # Módulo principal
-└── main.ts             # Punto de entrada
+1. Clonar el repositorio:
+```bash
+git clone https://github.com/W-Varg/peluqueria_backend.git
+cd peluqueria_backend
 ```
 
-## 🛡️ Roles y Accesos
+2. Instalar dependencias:
+```bash
+yarn install
+```
 
-- **ADMIN:** Acceso completo
-- **EMPLEADO:** Gestión de reservas propias
-- **CLIENTE:** Autogestión de reservas
+3. Configurar variables de entorno:
+```bash
+cp .env.example .env
+```
+Editar el archivo `.env` con tus configuraciones.
+
+4. Ejecutar migraciones de Prisma:
+```bash
+yarn prisma migrate dev
+```
+
+5. Iniciar el servidor en modo desarrollo:
+```bash
+yarn start:dev
+```
+
+## Scripts Disponibles
+
+- `yarn start:dev`: Inicia el servidor en modo desarrollo
+- `yarn build`: Compila el proyecto
+- `yarn start:prod`: Inicia el servidor en modo producción
+- `yarn test`: Ejecuta los tests
+- `yarn prisma:generate`: Genera el cliente Prisma
+- `yarn prisma:migrate`: Ejecuta las migraciones de la base de datos
+
+## Estado de Docker Compose
+
+⚠️ **Nota Importante**: Actualmente, la configuración de Docker Compose presenta problemas y no está funcionando correctamente. Se recomienda ejecutar el proyecto localmente siguiendo los pasos de instalación manual mencionados arriba.
+
+Los problemas conocidos incluyen:
+- Errores en la generación del cliente Prisma
+- Problemas de conexión con la base de datos
+- Conflictos con las variables de entorno
+
+Estamos trabajando en resolver estos problemas. Por ahora, se recomienda el desarrollo local.
+
+
+## Licencia
+
+Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para más detalles.
