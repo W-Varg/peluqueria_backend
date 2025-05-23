@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../infrastructure/persistence/prisma/prisma.service';
-import { ServicioRepository } from '../../domain/interface/servicio.repository';
-import { Servicio } from '../../domain/aggregates/service/entities/servicio';
+import { PrismaService } from '../../../infrastructure/persistence/prisma/prisma.service';
+import { ServicioRepository } from '../../../domain/interface/servicio.repository';
+import { Servicio } from '../../../domain/aggregates/service/entities/servicio';
 
 @Injectable()
 export class PrismaServicioRepository implements ServicioRepository {

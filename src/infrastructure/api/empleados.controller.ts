@@ -1,13 +1,13 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
-import { EmpleadosService } from './empleados.service';
-import { CreateEmpleadoDto } from './dto/create-empleado.dto';
-import { UpdateEmpleadoDto } from './dto/update-empleado.dto';
 import { Rol } from '@prisma/client';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from 'src/common/guards/decorators/roles.decorator';
-import { EmpleadoResponseDto } from './dto/empleado.model';
+import { EmpleadosService } from 'src/shared/domain/empleados/empleados.service';
+import { EmpleadoResponseDto } from 'src/shared/domain/empleados/dto/empleado.model';
+import { CreateEmpleadoDto } from 'src/shared/domain/empleados/dto/create-empleado.dto';
+import { UpdateEmpleadoDto } from 'src/shared/domain/empleados/dto/update-empleado.dto';
 
 @ApiTags('empleados')
 @ApiBearerAuth()

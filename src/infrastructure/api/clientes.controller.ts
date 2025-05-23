@@ -2,7 +2,7 @@ import { Controller, Get, Param, Delete, UseGuards, ParseIntPipe } from '@nestjs
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
-import { ClienteService } from '../../domain/services/cliente.service';
+import { ClienteService } from '../../domain/aggregates/repository/client.repository';
 
 @Controller('clientes')
 @ApiBearerAuth()

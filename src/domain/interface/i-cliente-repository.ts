@@ -1,9 +1,9 @@
-import { Cliente } from '../aggregates/client/entities/cliente';
+import { ClientAggregate } from '../aggregates/client/client.aggregate';
 
-export interface IClienteRepository {
-  crear(cliente: Cliente): Promise<Cliente>;
-  buscarPorId(id: string): Promise<Cliente | null>;
-  buscarTodos(): Promise<Cliente[]>;
-  actualizar(cliente: Cliente): Promise<void>;
-  eliminar(id: string): Promise<void>;
+export interface IClientRepository {
+  save(client: ClientAggregate): Promise<void>;
+  findById(id: string): Promise<ClientAggregate | null>;
+  findByEmail(email: string): Promise<ClientAggregate | null>;
+  findAll(): Promise<ClientAggregate[]>;
+  delete(id: string): Promise<void>;
 }

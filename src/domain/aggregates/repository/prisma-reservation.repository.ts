@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../infrastructure/persistence/prisma/prisma.service';
-import { IReservationRepository } from '../../repositories/reservation.repository.interface';
+import { IReservationRepository } from '../../interface/i-reservation.repository';
 import { Reservation } from '../reservation/entities/reservation.entity';
 import { Prisma } from '@prisma/client';
 

@@ -10,9 +10,9 @@ import {
   ParseIntPipe,
   Put,
 } from '@nestjs/common';
-import { ReservaService } from './reserva.service';
-import { CreateReservaDto } from './dto/create-reserva.dto';
-import { UpdateReservaDto } from './dto/update-reserva.dto';
+import { ReservaService } from '../../shared/domain/reserva/reserva.service';
+import { CreateReservaDto } from '../../shared/domain/reserva/dto/create-reserva.dto';
+import { UpdateReservaDto } from '../../shared/domain/reserva/dto/update-reserva.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { RolesGuard } from 'src/common/guards/roles.guard';

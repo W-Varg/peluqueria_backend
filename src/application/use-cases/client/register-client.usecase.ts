@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ClientAggregate } from '../../../domain/aggregates/client/client.aggregate';
-import { IClientRepository } from '../../../domain/repositories/client.repository';
+import { IClientRepository } from '../../../domain/interface/i-cliente-repository';
 import { v4 as uuidv4 } from 'uuid';
 
 export interface RegisterClientCommand {

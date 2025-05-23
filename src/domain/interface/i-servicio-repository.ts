@@ -1,9 +1,10 @@
-import { Servicio } from '../aggregates/service/entities/servicio';
+import { ServiceAggregate } from '../aggregates/service/service.aggregate';
 
-export interface IServicioRepository {
-  crear(servicio: Servicio): Promise<Servicio>;
-  buscarPorId(id: string): Promise<Servicio | null>;
-  buscarTodos(): Promise<Servicio[]>;
-  actualizar(servicio: Servicio): Promise<void>;
-  eliminar(id: string): Promise<void>;
+export interface IServiceRepository {
+  save(service: ServiceAggregate): Promise<void>;
+  findById(id: string): Promise<ServiceAggregate | null>;
+  findByName(name: string): Promise<ServiceAggregate | null>;
+  findAll(): Promise<ServiceAggregate[]>;
+  findActive(): Promise<ServiceAggregate[]>;
+  delete(id: string): Promise<void>;
 }

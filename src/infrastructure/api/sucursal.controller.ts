@@ -1,8 +1,8 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
-import { SucursalesService } from './sucursal.service';
-import { CreateSucursalDto, UpdateSucursalDto } from './dto/input.dto';
+import { CreateSucursalDto, UpdateSucursalDto } from 'src/shared/domain/sucursal/dto/sucursal.dto';
+import { SucursalesService } from 'src/shared/domain/sucursal/sucursal.service';
 
 @ApiTags('sucursales')
 @ApiBearerAuth()

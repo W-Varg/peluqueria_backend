@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
-import { Cliente } from '../aggregates/client/entities/cliente';
-import { CreateClienteDto } from '../../application/dto/create-cliente.dto';
-import { PrismaService } from '../../infrastructure/persistence/prisma/prisma.service';
-import { PreferenciasCliente } from '../value-objects/preferencias-cliente';
+import { Cliente } from '../client/entities/cliente';
+import { CreateClienteDto } from '../../../application/dto/create-cliente.dto';
+import { PrismaService } from '../../../infrastructure/persistence/prisma/prisma.service';
+import { PreferenciasCliente } from '../../value-objects/preferencias-cliente';
 import { Prisma } from '@prisma/client';
 
 type PrismaClienteWithRelations = Prisma.ClienteGetPayload<{

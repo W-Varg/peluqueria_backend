@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ClientesController } from '../infrastructure/api/clientes.controller';
-import { ClienteService } from './services/cliente.service';
+import { ClienteService } from './aggregates/repository/client.repository';
 import { PrismaService } from 'src/infrastructure/persistence/prisma/prisma.service';
 
 @Module({

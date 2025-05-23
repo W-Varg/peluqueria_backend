@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ServiceAggregate } from '../../../domain/aggregates/service/service.aggregate';
-import { IServiceRepository } from '../../../domain/repositories/service.repository';
 import { v4 as uuidv4 } from 'uuid';
+import { IServiceRepository } from 'src/domain/interface/i-servicio-repository';
 
 export interface CreateServiceCommand {
   name: string;
@@ -61,4 +61,4 @@ export class CreateServiceUseCase {
       createdAt: service.createdAt,
     };
   }
-} 
+}
