@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { ConfigService } from '@nestjs/config';
-import { configSwagger, IPackageJson, printServerInitLog } from './helpers/swagger.helper';
+import { configSwagger, IPackageJson, printServerInitLog } from './shared/helpers/swagger.helper';
 import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {

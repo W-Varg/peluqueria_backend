@@ -1,17 +1,19 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../../database/prisma.service';
+import { PrismaService } from '../../infrastructure/persistence/prisma/prisma.service';
 import { Reserva } from '../../domain/entities/reserva';
 import { CreateReservaDto } from './dto/create-reserva.dto';
 import { UpdateReservaDto } from './dto/update-reserva.dto';
 import { EstadoReserva } from '../../domain/value-objects/estado-reserva';
-import { Cliente } from '../../domain/entities/cliente';
-import { Servicio } from '../../domain/entities/servicio';
+// import { Cliente } from '../../domain/entities/cliente';
+// import { Servicio } from '../../domain/entities/servicio';
 import { PreferenciasCliente } from '../../domain/value-objects/preferencias-cliente';
 import { Duracion } from '../../domain/value-objects/duracion';
 import { Precio } from '../../domain/value-objects/precio';
 import { Horario } from '../../domain/value-objects/horario';
 import { Prisma } from '@prisma/client';
 import { EmployeeAssignmentService } from '../../domain/services/employee-assignment.service';
+import { Cliente } from 'src/domain/aggregates/client/entities/cliente';
+import { Servicio } from 'src/domain/aggregates/service/entities/servicio';
 
 type PrismaReservaWithRelations = Prisma.ReservaGetPayload<{
   include: {

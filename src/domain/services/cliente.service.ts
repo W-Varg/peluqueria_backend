@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
-import { Cliente } from '../entities/cliente';
-import { CreateClienteDto } from '../dto/create-cliente.dto';
-import { PrismaService } from '../../database/prisma.service';
+import { Cliente } from '../aggregates/client/entities/cliente';
+import { CreateClienteDto } from '../../application/dto/create-cliente.dto';
+import { PrismaService } from '../../infrastructure/persistence/prisma/prisma.service';
 import { PreferenciasCliente } from '../value-objects/preferencias-cliente';
 import { Prisma } from '@prisma/client';
 

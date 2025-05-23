@@ -1,7 +1,7 @@
 import { EstadoReserva } from '../value-objects/estado-reserva';
 import { Horario } from '../value-objects/horario';
-import { Cliente } from './cliente';
-import { Servicio } from './servicio';
+import { Cliente } from '../aggregates/client/entities/cliente';
+import { Servicio } from '../aggregates/service/entities/servicio';
 
 interface ReservaProps {
   cliente: Cliente;

@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { PrismaService } from '../../database/prisma.service';
+import { PrismaService } from '../../infrastructure/persistence/prisma/prisma.service';
 import { EmployeeAssignmentService } from '../../domain/services/employee-assignment.service';
-import { DatabaseModule } from '../../database/database.module';
-import { PrismaReservationRepository } from '../../domain/repository/prisma-reservation.repository';
-import { CreateReservationUseCase } from 'src/domain/use-cases/create-reservation.use-case';
+import { DatabaseModule } from 'src/infrastructure/persistence/prisma/database.module';
+import { PrismaReservationRepository } from 'src/domain/aggregates/repository/prisma-reservation.repository';
+import { CreateReservationUseCase } from 'src/application/use-cases/reservation/create-reservation.use-case';
 
 @Module({
   imports: [DatabaseModule],

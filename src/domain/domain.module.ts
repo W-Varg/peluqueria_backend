@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { ClientesController } from './controllers/clientes.controller';
+import { ClientesController } from '../infrastructure/api/clientes.controller';
 import { ClienteService } from './services/cliente.service';
-import { PrismaService } from 'src/database/prisma.service';
+import { PrismaService } from 'src/infrastructure/persistence/prisma/prisma.service';
 
 @Module({
   controllers: [ClientesController],

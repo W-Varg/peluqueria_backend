@@ -1,10 +1,10 @@
 import { Injectable, NotFoundException, Inject } from '@nestjs/common';
-import { ServicioRepository } from '../repository/servicio.repository';
-import { CreateServicioDto } from '../dto/create-servicio.dto';
-import { Servicio } from '../entities/servicio';
+import { ServicioRepository } from '../interface/servicio.repository';
+import { CreateServicioDto } from '../../application/dto/create-servicio.dto';
+import { Servicio } from '../aggregates/service/entities/servicio';
 import { Duracion } from '../value-objects/duracion';
 import { Precio } from '../value-objects/precio';
-import { SERVICE_REPOSITORY } from '../repository/servicio.repository.token';
+import { SERVICE_REPOSITORY } from '../interface/servicio.repository.token';
 
 @Injectable()
 export class ServicioService {

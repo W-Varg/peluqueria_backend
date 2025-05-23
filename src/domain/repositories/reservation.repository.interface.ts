@@ -1,4 +1,4 @@
-import { Reservation } from '../entities/reservation.entity';
+import { Reservation } from '../aggregates/reservation/entities/reservation.entity';
 
 export interface IReservationRepository {
   create(reservation: Reservation): Promise<Reservation>;

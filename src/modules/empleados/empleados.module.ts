@@ -1,8 +1,7 @@
 import { Module } from '@nestjs/common';
 import { EmpleadosService } from './empleados.service';
 import { EmpleadosController } from './empleados.controller';
-import { DatabaseModule } from '../../database/database.module';
-// import { AuthModule } from 'src/auth/auth.module';
+import { DatabaseModule } from 'src/infrastructure/persistence/prisma/database.module'; // import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
   imports: [DatabaseModule],

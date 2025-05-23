@@ -1,17 +1,17 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
-import { DatabaseModule } from './database/database.module';
-import { AuthModule } from './auth/auth.module';
+import { DatabaseModule } from './infrastructure/persistence/prisma/database.module';
+import { AuthModule } from './infrastructure/auth/auth.module';
 import { SucursalModule } from './modules/sucursal/sucursal.module';
 import { EmpleadosModule } from './modules/empleados/empleados.module';
-import configuration from './configurations/configuration';
+import configuration from './common/configurations/configuration';
 import { ServicioModule } from './modules/servicio.module';
-import { PrismaService } from './database/prisma.service';
+import { PrismaService } from './infrastructure/persistence/prisma/prisma.service';
 import { ReservationModule } from './modules/reserva/reservation.module';
 import { ReservaModule } from './modules/reserva/reserva.module';
 import { DomainModule } from './domain/domain.module';
+import { AppController } from './infrastructure/api/app.controller';
 
 @Module({
   imports: [
