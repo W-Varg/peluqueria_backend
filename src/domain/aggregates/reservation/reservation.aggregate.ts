@@ -1,7 +1,34 @@
+import { PrismaService } from 'src/infrastructure/persistence/prisma/prisma.service';
 import { AggregateRoot } from '../../../shared/domain/aggregate-root.base';
 import { DomainError } from '../../../shared/domain/domain.error';
 import { ReservationDateVO } from './value-objects/reservation-date.vo';
 import { ReservationStatus, ReservationStatusVO } from './value-objects/reservation-status.vo';
+import { Prisma } from '@prisma/client';
+import { Reserva } from 'src/shared/domain/reserva/reserva';
+import { PreferenciasCliente } from 'src/domain/value-objects/preferencias-cliente';
+import { Cliente } from '../client/entities/cliente';
+import { Servicio } from '../service/entities/servicio';
+import { Duracion } from 'src/domain/value-objects/duracion';
+import { Precio } from 'src/domain/value-objects/precio';
+import { Horario } from 'src/domain/value-objects/horario';
+import { EstadoReserva } from 'src/domain/value-objects/estado-reserva';
+import { CreateReservaDto } from 'src/shared/domain/reserva/dto/create-reserva.dto';
+
+type PrismaReservaWithRelations = Prisma.ReservaGetPayload<{
+  include: {
+    cliente: {
+      include: {
+        usuario: true;
+      };
+    };
+    servicio: true;
+    empleado: {
+      include: {
+        usuario: true;
+      };
+    };
+  };
+}>;
 
 export interface ReservationProps {
   id: string;
@@ -14,7 +41,10 @@ export interface ReservationProps {
 }
 
 export class ReservationAggregate extends AggregateRoot<ReservationProps> {
-  private constructor(props: ReservationProps) {
+  private constructor(
+    props: ReservationProps,
+    private prisma: PrismaService = new PrismaService(),
+  ) {
     super(props);
   }
 
@@ -116,5 +146,133 @@ export class ReservationAggregate extends AggregateRoot<ReservationProps> {
     }
     this.props.date = ReservationDateVO.create(newDate, newDuration);
     this.props.updatedAt = new Date();
+  }
+
+  private mapReservaToEntity(reserva: PrismaReservaWithRelations): Reserva {
+    // Create Cliente entity
+    const clienteProps = {
+      nombre: reserva.cliente.usuario.name,
+      telefono: reserva.cliente.telefono || '',
+      email: reserva.cliente.usuario.email,
+      usuarioId: reserva.cliente.usuario.id,
+      preferencias: PreferenciasCliente.create({
+        horario: [],
+        estilista: [],
+        servicios: [],
+      }),
+      estado: reserva.cliente.estado,
+      visitas: reserva.cliente.visitasTotal,
+      ultimaVisita: reserva.cliente.ultimaVisita,
+    };
+    const cliente = Cliente.create(clienteProps, reserva.cliente.id.toString());
+
+    // Create Servicio entity
+    const servicio = Servicio.create(
+      reserva.servicio.id,
+      reserva.servicio.nombre,
+      new Duracion(reserva.servicio.duracion),
+      new Precio(reserva.servicio.precio),
+      reserva.servicio.descripcion,
+    );
+
+    // Create Horario value object
+    const horaInicio = new Date(reserva.hora);
+    const horaFin = new Date(horaInicio.getTime() + reserva.servicio.duracion * 60000);
+    const horario = Horario.create(
+      reserva.fecha,
+      `${horaInicio.getHours().toString().padStart(2, '0')}:${horaInicio.getMinutes().toString().padStart(2, '0')}`,
+      `${horaFin.getHours().toString().padStart(2, '0')}:${horaFin.getMinutes().toString().padStart(2, '0')}`,
+    );
+
+    // Create Reserva entity
+    return Reserva.create(
+      {
+        cliente: cliente,
+        servicio: servicio,
+        horario: horario,
+        estado: reserva.estado as EstadoReserva,
+      },
+      reserva.id.toString(),
+    );
+  }
+
+  private convertToDate(fecha: Date, horaStr: Date): Date {
+    const fechaDate: Date = new Date(fecha);
+    const horaDate: Date = new Date(horaStr);
+    const [hours, minutes] = [horaDate.getHours(), horaDate.getMinutes()];
+    return new Date(
+      fechaDate.getFullYear(),
+      fechaDate.getMonth(),
+      fechaDate.getDate(),
+      hours,
+      minutes,
+    );
+  }
+
+  async crear(createReservaDto: CreateReservaDto) {
+    const hora = this.convertToDate(createReservaDto.fecha, createReservaDto.horaInicio);
+
+    return this.prisma.reserva.create({
+      data: {
+        fecha: createReservaDto.fecha,
+        hora: hora,
+        clienteId: createReservaDto.clienteId,
+        empleadoId: createReservaDto.empleadoId,
+        servicioId: createReservaDto.servicioId,
+        estado: createReservaDto.estado,
+      },
+      include: {
+        cliente: {
+          include: {
+            usuario: true,
+          },
+        },
+        empleado: {
+          include: {
+            usuario: true,
+          },
+        },
+        servicio: true,
+      },
+    });
+  }
+
+  async findAll() {
+    return this.prisma.reserva.findMany({
+      include: {
+        cliente: {
+          include: {
+            usuario: true,
+          },
+        },
+        empleado: {
+          include: {
+            usuario: true,
+          },
+        },
+        servicio: true,
+      },
+    });
+  }
+
+  async reservasCliente(id: number) {
+    const result = await this.prisma.reserva.findMany({
+      where: { clienteId: id },
+      include: {
+        cliente: {
+          include: {
+            usuario: true,
+          },
+        },
+        empleado: {
+          include: {
+            usuario: true,
+          },
+        },
+        servicio: true,
+      },
+    });
+
+    return result;
   }
 }
