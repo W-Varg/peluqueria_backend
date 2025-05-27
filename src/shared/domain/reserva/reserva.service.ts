@@ -4,8 +4,6 @@ import { Reserva } from './reserva';
 import { CreateReservaDto } from './dto/create-reserva.dto';
 import { UpdateReservaDto } from './dto/update-reserva.dto';
 import { EstadoReserva } from '../../../domain/value-objects/estado-reserva';
-// import { Cliente } from '../../domain/entities/cliente';
-// import { Servicio } from '../../domain/entities/servicio';
 import { PreferenciasCliente } from '../../../domain/value-objects/preferencias-cliente';
 import { Duracion } from '../../../domain/value-objects/duracion';
 import { Precio } from '../../../domain/value-objects/precio';
@@ -100,24 +98,6 @@ export class ReservaService {
   }
 
   async create(createReservaDto: CreateReservaDto) {
-    // Si no se proporciona empleadoId, buscar uno disponible
-    // if (!createReservaDto.empleadoId) {
-    //   const hora = this.convertToDate(createReservaDto.fecha, createReservaDto.horaInicio);
-    //   const empleadoId = await this.employeeAssignmentService.findAvailableEmployee(
-    //     createReservaDto.fecha,
-    //     hora,
-    //     createReservaDto.servicioId,
-    //   );
-
-    //   console.log('execute', createReservaDto, !empleadoId);
-
-    //   if (!empleadoId) {
-    //     throw new NotFoundException('No hay empleados disponibles para este horario');
-    //   }
-
-    //   createReservaDto.empleadoId = empleadoId;
-    // }
-
     const hora = this.convertToDate(createReservaDto.fecha, createReservaDto.horaInicio);
 
     return this.prisma.reserva.create({
